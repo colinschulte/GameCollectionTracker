@@ -1,0 +1,30 @@
+﻿@model LiftoffProject.ViewModels.AddGameViewModel
+
+<h1>Add Game</h1>
+
+<form asp-controller="Game" asp-action="Add" method="post">
+
+    <div class="form-group">
+        <label asp-for="Name">Search by Name</label>
+        <input class="form-control" type="search" asp-for="Name" />
+        <span asp-validation-for="Name"></span>
+    </div>
+
+    <input type="submit" value="Search" />
+
+</form>
+
+@if (TempData["response"] != null)
+{
+    var response = TempData["response"] as Game[];
+
+    @foreach (Game game in response)
+    {
+        <form asp-controller="Game" asp-action="AddCollection" method="post">
+            <h4>@game.Name</h4>
+            <input type="hidden" value="@game.Id" name="id"/>
+            <input type="submit" value="Add to Collection"/>
+        </form>
+    }
+
+}

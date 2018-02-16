@@ -11,12 +11,21 @@ else
     <table class="table">
         <tr>
             <th>Name</th>
+            <th>Box Art</th>
         </tr>
 
-        @foreach (var game in Model)
+        @foreach (Game game in Model)
         {
             <tr>
                 <td>@game.Name</td>
+                @if (game.Cover != null)
+                {
+                <td><img src="@game.Cover.Url" alt="@game.Name" style="height:auto" /></td>
+                }
+                else
+                {
+                    <td>No Box Art</td>
+                }
             </tr>
         }
 
