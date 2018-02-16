@@ -154,6 +154,8 @@ namespace LiftoffProject.Models
         [JsonProperty(PropertyName = "cover")]
         public Image Cover { get; set; }
 
+        //public int
+
         //esrb(object, optional),
         [NotMapped]
         [JsonProperty(PropertyName = "esrb")]

@@ -95,6 +95,14 @@ namespace LiftoffProject.Controllers
             }
         }
 
+        public IActionResult Delete(int gameId)
+        {
+            Game game = context.Games.Single(g => g.Id == gameId);
+            context.Games.Remove(game);
+            context.SaveChanges();
+            return Redirect("/Game");
+        }
+
         public async Task<IActionResult> Test()
         {
             RunAsync().GetAwaiter().GetResult();
