@@ -86,6 +86,7 @@ namespace LiftoffProject.Controllers
                     context.Games.Add(newGame);
                     context.SaveChanges();
                 }
+                
 
                 return Redirect("/Game");
             }

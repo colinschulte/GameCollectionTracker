@@ -2,16 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace LiftoffProject.Models
 {
-    public class Image
+    public class Cover
     {
         [Key]
-        public int LocalId { get; set; }
+        public int CoverId { get; set; }
 
         [JsonProperty(PropertyName = "url")]
         public string Url { get; set; }
@@ -24,8 +23,5 @@ namespace LiftoffProject.Models
 
         [JsonProperty(PropertyName = "height")]
         public string Height { get; set; }
-
-        [ForeignKey("Game")]
-        public int GameId { get; set; }
     }
 }

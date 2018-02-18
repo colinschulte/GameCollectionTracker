@@ -150,11 +150,11 @@ namespace LiftoffProject.Models
         [JsonProperty(PropertyName = "videos")]
         public ICollection<Video> Videos { get; set; }
 
+        public int CoverId { get; set; }
+
         //cover(object, optional),
         [JsonProperty(PropertyName = "cover")]
-        public Image Cover { get; set; }
-
-        //public int
+        public Cover Cover { get; set; }
 
         //esrb(object, optional),
         [NotMapped]
