@@ -82,7 +82,7 @@ namespace LiftoffProject.Models
         //game_engines(Array[GameEngine], optional),
         [NotMapped]
         [JsonProperty(PropertyName = "game_engines")]
-        public GameEngine[] GameEngines { get; set; }
+        public int[] GameEngines { get; set; }
 
         //category(integer, optional),
         [JsonProperty(PropertyName = "category")]

@@ -11,6 +11,7 @@ namespace LiftoffProject.Data
         public DbSet<Game> Games { get; set; }
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<Cover> Covers { get; set; }
+        //public DbSet<ReleaseDate> ReldeaseDates { get; set; }
 
         public GameDbContext(DbContextOptions<GameDbContext> options) 
             : base(options) 

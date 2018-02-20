@@ -5,10 +5,40 @@ using System.Collections.Generic;
 
 namespace LiftoffProject.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Covers",
+                columns: table => new
+                {
+                    CoverId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CloudinaryId = table.Column<string>(nullable: true),
+                    Height = table.Column<string>(nullable: true),
+                    Url = table.Column<string>(nullable: true),
+                    Width = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Covers", x => x.CoverId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Ratings",
+                columns: table => new
+                {
+                    LocalId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    RatingInt = table.Column<int>(nullable: false),
+                    Synopsis = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ratings", x => x.LocalId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Games",
                 columns: table => new
@@ -19,6 +49,7 @@ namespace LiftoffProject.Migrations
                     AggregatedRatingCount = table.Column<int>(nullable: false),
                     Category = table.Column<int>(nullable: false),
                     Collection = table.Column<long>(nullable: false),
+                    CoverId = table.Column<int>(nullable: false),
                     CreatedAt = table.Column<long>(nullable: false),
                     FirstReleaseDate = table.Column<long>(nullable: false),
                     Franchise = table.Column<long>(nullable: false),
@@ -41,40 +72,11 @@ namespace LiftoffProject.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Games", x => x.LocalId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Ratings",
-                columns: table => new
-                {
-                    LocalId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    RatingInt = table.Column<int>(nullable: false),
-                    Synopsis = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Ratings", x => x.LocalId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Images",
-                columns: table => new
-                {
-                    LocalId = table.Column<int>(nullable: false),
-                    CloudinaryId = table.Column<string>(nullable: true),
-                    Height = table.Column<string>(nullable: true),
-                    Url = table.Column<string>(nullable: true),
-                    Width = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Images", x => x.LocalId);
                     table.ForeignKey(
-                        name: "FK_Images_Games_LocalId",
-                        column: x => x.LocalId,
-                        principalTable: "Games",
-                        principalColumn: "LocalId",
+                        name: "FK_Games_Covers_CoverId",
+                        column: x => x.CoverId,
+                        principalTable: "Covers",
+                        principalColumn: "CoverId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -97,13 +99,15 @@ namespace LiftoffProject.Migrations
                         principalColumn: "LocalId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Games_CoverId",
+                table: "Games",
+                column: "CoverId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Images");
-
             migrationBuilder.DropTable(
                 name: "Ratings");
 
@@ -112,6 +116,9 @@ namespace LiftoffProject.Migrations
 
             migrationBuilder.DropTable(
                 name: "Games");
+
+            migrationBuilder.DropTable(
+                name: "Covers");
         }
     }
 }

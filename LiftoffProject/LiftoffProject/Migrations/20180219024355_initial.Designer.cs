@@ -11,8 +11,8 @@ using System;
 namespace LiftoffProject.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    [Migration("20180218054849_added covers to dbcontext")]
-    partial class addedcoverstodbcontext
+    [Migration("20180219024355_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

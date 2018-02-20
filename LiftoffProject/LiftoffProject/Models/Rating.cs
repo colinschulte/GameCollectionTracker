@@ -10,7 +10,7 @@ namespace LiftoffProject.Models
     public class Rating
     {
         [Key]
-        public int LocalId { get; set; }
+        public int RatingId { get; set; }
 
         [JsonProperty(PropertyName = "rating")]
         public int RatingInt { get; set; }

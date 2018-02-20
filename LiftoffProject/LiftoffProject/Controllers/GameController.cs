@@ -49,7 +49,11 @@ namespace LiftoffProject.Controllers
 
         public IActionResult Index()
         {
-            IList<Game> games = context.Games.ToList();
+            ViewBag.Title = "My Collection";
+
+            IList<Game> games = context.Games
+                .Include(g => g.Cover)
+                .ToList();
             return View(games);
         }
 
@@ -83,6 +87,10 @@ namespace LiftoffProject.Controllers
                 var games = await GetGameAsync("games/" + game.Id);
                 foreach (Game newGame in games)
                 {
+                    if (newGame.CoverId != 0)
+                    {
+                       newGame.Cover = context.Covers.Find(newGame.CoverId);
+                    }
                     context.Games.Add(newGame);
                     context.SaveChanges();
                 }
@@ -102,6 +110,16 @@ namespace LiftoffProject.Controllers
             context.Games.Remove(game);
             context.SaveChanges();
             return Redirect("/Game");
+        }
+
+        public IActionResult Details(int gameId)
+        {
+            Game game = context.Games.Single(g => g.LocalId == gameId);
+            if (game.CoverId != 0)
+            {
+                game.Cover = context.Covers.Find(game.CoverId);
+            }
+            return View(game);
         }
 
         public async Task<IActionResult> Test()
