@@ -5,4 +5,15 @@
 <img src="@Model.Cover.Url" alt="@Model.Name" />
 
 
-<h6>@Model.Summary</h6>
+<h4>@Model.Summary</h4>
+
+@if(Model.Developers != null)
+{
+    <h4>Developed by:</h4>
+    foreach(Developer developer in Model.Developers)
+    {
+        <h4>@developer.Name</h4>
+
+    }
+
+}

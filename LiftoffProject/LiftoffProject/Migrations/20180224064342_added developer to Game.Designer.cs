@@ -11,9 +11,10 @@ using System;
 namespace LiftoffProject.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    partial class GameDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180224064342_added developer to Game")]
+    partial class addeddevelopertoGame
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,14 +41,14 @@ namespace LiftoffProject.Migrations
 
             modelBuilder.Entity("LiftoffProject.Models.Developer", b =>
                 {
-                    b.Property<int>("DeveloperId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("GameId");
 
-                    b.Property<string>("Name");
+                    b.Property<int>("Name");
 
-                    b.HasKey("DeveloperId");
+                    b.HasKey("Id");
 
                     b.HasIndex("GameId");
 

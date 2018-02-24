@@ -47,6 +47,19 @@ namespace LiftoffProject.Controllers
             return games;
         }
 
+        async Task<Developer[]> GetDeveloperAsync(string path)
+        {
+            Developer[] devs = null;
+            string jsonDev = "";
+            HttpResponseMessage response = await client.GetAsync(path);
+            if (response.IsSuccessStatusCode)
+            {
+                jsonDev = await response.Content.ReadAsStringAsync();
+                devs = JsonConvert.DeserializeObject<Developer[]>(jsonDev);
+            }
+            return devs;
+        }
+
         public IActionResult Index()
         {
             ViewBag.Title = "My Collection";
@@ -93,7 +106,34 @@ namespace LiftoffProject.Controllers
                     }
                     context.Games.Add(newGame);
                     context.SaveChanges();
+                    if (newGame.DeveloperIds != null)
+                    {
+                        string devIds = "";
+                        bool first = true;
+                        foreach(int devId in newGame.DeveloperIds)
+                        {
+                            if(!context.Developers.Any(d => d.DeveloperId == devId))
+                            {
+                                if(first == true)
+                                {
+                                    devIds += (devId.ToString());
+                                    first = false;
+                                }
+                                else
+                                {
+                                    devIds += ("," + devId.ToString());
+                                }
+                            }
+                        }
+                        Developer[] devs = await GetDeveloperAsync("companies/" + devIds);
+                        foreach(Developer dev in devs)
+                        {
+                            dev.GameId = newGame.LocalId;
+                            context.Developers.Add(dev);
+                        }
+                    }
                 }
+                context.SaveChanges();
                 
 
                 return Redirect("/Game");
@@ -106,7 +146,7 @@ namespace LiftoffProject.Controllers
 
         public IActionResult Delete(int gameId)
         {
-            Game game = context.Games.Single(g => g.Id == gameId);
+            Game game = context.Games.Single(g => g.LocalId == gameId);
             context.Games.Remove(game);
             context.SaveChanges();
             return Redirect("/Game");
@@ -119,6 +159,13 @@ namespace LiftoffProject.Controllers
             {
                 game.Cover = context.Covers.Find(game.CoverId);
             }
+            if (context.Developers.Any(d => d.GameId == game.LocalId))
+            {
+                game.Developers = (from d in context.Developers
+                                   where d.GameId == game.LocalId
+                                   select d).ToArray();
+            }
+            
             return View(game);
         }
 

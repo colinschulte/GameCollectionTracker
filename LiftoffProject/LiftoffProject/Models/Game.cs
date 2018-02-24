@@ -72,7 +72,9 @@ namespace LiftoffProject.Models
         //developers(Array[integer], optional),
         [NotMapped]
         [JsonProperty(PropertyName = "developers")]
-        public int[] Developers { get; set; }
+        public ICollection<int> DeveloperIds { get; set; }
+
+        public ICollection<Developer> Developers { get; set; }
 
         //publishers(Array[integer], optional),
         [NotMapped]
@@ -89,7 +91,6 @@ namespace LiftoffProject.Models
         public int Category { get; set; }
 
         //time_to_beat(object, optional),
-
         [JsonProperty(PropertyName = "time_to_beat")]
         public TimeToBeat TimeToBeat { get; set; }
 

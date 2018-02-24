@@ -11,9 +11,10 @@ using System;
 namespace LiftoffProject.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    partial class GameDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180224070150_changed developer.name to string")]
+    partial class changeddevelopernametostring
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,14 +41,14 @@ namespace LiftoffProject.Migrations
 
             modelBuilder.Entity("LiftoffProject.Models.Developer", b =>
                 {
-                    b.Property<int>("DeveloperId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("GameId");
 
                     b.Property<string>("Name");
 
-                    b.HasKey("DeveloperId");
+                    b.HasKey("Id");
 
                     b.HasIndex("GameId");
 

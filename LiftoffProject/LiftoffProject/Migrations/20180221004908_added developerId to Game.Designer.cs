@@ -11,9 +11,10 @@ using System;
 namespace LiftoffProject.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    partial class GameDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180221004908_added developerId to Game")]
+    partial class addeddeveloperIdtoGame
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,20 +39,18 @@ namespace LiftoffProject.Migrations
                     b.ToTable("Covers");
                 });
 
-            modelBuilder.Entity("LiftoffProject.Models.Developer", b =>
+            modelBuilder.Entity("LiftoffProject.Models.DeveloperId", b =>
                 {
-                    b.Property<int>("DeveloperId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("GameId");
 
-                    b.Property<string>("Name");
-
-                    b.HasKey("DeveloperId");
+                    b.HasKey("Id");
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("Developers");
+                    b.ToTable("DeveloperId");
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.Game", b =>
@@ -141,10 +140,10 @@ namespace LiftoffProject.Migrations
                     b.ToTable("TimeToBeat");
                 });
 
-            modelBuilder.Entity("LiftoffProject.Models.Developer", b =>
+            modelBuilder.Entity("LiftoffProject.Models.DeveloperId", b =>
                 {
                     b.HasOne("LiftoffProject.Models.Game")
-                        .WithMany("Developers")
+                        .WithMany("DeveloperIds")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
