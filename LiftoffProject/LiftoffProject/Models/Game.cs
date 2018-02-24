@@ -79,7 +79,9 @@ namespace LiftoffProject.Models
         //publishers(Array[integer], optional),
         [NotMapped]
         [JsonProperty(PropertyName = "publishers")]
-        public int[] Publishers { get; set; }
+        public int[] PublisherIds { get; set; }
+
+        public ICollection<Publisher> Publishers { get; set; }
 
         //game_engines(Array[GameEngine], optional),
         [NotMapped]

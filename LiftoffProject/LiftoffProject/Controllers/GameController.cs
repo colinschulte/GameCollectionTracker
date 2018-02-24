@@ -60,6 +60,19 @@ namespace LiftoffProject.Controllers
             return devs;
         }
 
+        async Task<Publisher[]> GetPublisherAsync(string path)
+        {
+            Publisher[] devs = null;
+            string jsonDev = "";
+            HttpResponseMessage response = await client.GetAsync(path);
+            if (response.IsSuccessStatusCode)
+            {
+                jsonDev = await response.Content.ReadAsStringAsync();
+                devs = JsonConvert.DeserializeObject<Publisher[]>(jsonDev);
+            }
+            return devs;
+        }
+
         public IActionResult Index()
         {
             ViewBag.Title = "My Collection";
@@ -102,7 +115,7 @@ namespace LiftoffProject.Controllers
                 {
                     if (newGame.CoverId != 0)
                     {
-                       newGame.Cover = context.Covers.Find(newGame.CoverId);
+                        newGame.Cover = context.Covers.Find(newGame.CoverId);
                     }
                     context.Games.Add(newGame);
                     context.SaveChanges();
@@ -110,11 +123,11 @@ namespace LiftoffProject.Controllers
                     {
                         string devIds = "";
                         bool first = true;
-                        foreach(int devId in newGame.DeveloperIds)
+                        foreach (int devId in newGame.DeveloperIds)
                         {
-                            if(!context.Developers.Any(d => d.DeveloperId == devId))
+                            if (!context.Developers.Any(d => d.CompanyId == devId))
                             {
-                                if(first == true)
+                                if (first == true)
                                 {
                                     devIds += (devId.ToString());
                                     first = false;
@@ -126,16 +139,40 @@ namespace LiftoffProject.Controllers
                             }
                         }
                         Developer[] devs = await GetDeveloperAsync("companies/" + devIds);
-                        foreach(Developer dev in devs)
+                        foreach (Developer dev in devs)
                         {
                             dev.GameId = newGame.LocalId;
                             context.Developers.Add(dev);
                         }
                     }
+                    if (newGame.PublisherIds != null)
+                    {
+                        string pubIds = "";
+                        bool first = true;
+                        foreach (int pubId in newGame.PublisherIds)
+                        {
+                            if (!context.Publishers.Any(p => p.CompanyId == pubId))
+                            {
+                                if (first == true)
+                                {
+                                    pubIds += (pubId.ToString());
+                                    first = false;
+                                }
+                                else
+                                {
+                                    pubIds += ("," + pubId.ToString());
+                                }
+                            }
+                        }
+                        Publisher[] pubs = await GetPublisherAsync("companies/" + pubIds);
+                        foreach (Publisher pub in pubs)
+                        {
+                            pub.GameId = newGame.LocalId;
+                            context.Publishers.Add(pub);
+                        }
+                    }
                 }
                 context.SaveChanges();
-                
-
                 return Redirect("/Game");
             }
             else
@@ -165,7 +202,13 @@ namespace LiftoffProject.Controllers
                                    where d.GameId == game.LocalId
                                    select d).ToArray();
             }
-            
+            if (context.Publishers.Any(p => p.GameId == game.LocalId))
+            {
+                game.Publishers = (from p in context.Publishers
+                                   where p.GameId == game.LocalId
+                                   select p).ToArray();
+            }
+
             return View(game);
         }
 

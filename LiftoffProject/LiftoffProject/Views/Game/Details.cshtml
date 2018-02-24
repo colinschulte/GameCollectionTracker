@@ -17,3 +17,13 @@
     }
 
 }
+@if(Model.Publishers != null)
+{
+    <h4>Published by:</h4>
+    foreach(Publisher publisher in Model.Publishers)
+    {
+        <h4>@publisher.Name</h4>
+
+    }
+
+}
