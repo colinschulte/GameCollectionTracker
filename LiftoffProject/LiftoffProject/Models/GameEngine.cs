@@ -11,7 +11,7 @@ namespace LiftoffProject.Models
     {
         //logo(object, optional),
         [JsonProperty(PropertyName = "logo")]
-        public object Logo { get; set; }
+        public Image Logo { get; set; }
 
         //platforms(Array[integer], optional),
         [JsonProperty(PropertyName = "platforms")]

@@ -1,28 +1,42 @@
-﻿@model LiftoffProject.Models.Game
+﻿@model LiftoffProject.ViewModels.GameDetailsViewModel
 
-    <h1>@Model.Name</h1>
+@{
+    ViewBag.Title = Model.Game.Name;
+ }
 
-<img src="@Model.Cover.Url" alt="@Model.Name" />
+    <h1>@Model.Game.Name</h1>
+
+<img src="@Model.Game.Cover.Url" alt="@Model.Game.Name" />
 
 
-<h4>@Model.Summary</h4>
+<h4>@Model.Game.Summary</h4>
 
-@if(Model.Developers != null)
+@if(Model.Game.Developers != null)
 {
     <h4>Developed by:</h4>
-    foreach(Developer developer in Model.Developers)
+    foreach(Developer developer in Model.Game.Developers)
     {
         <h4>@developer.Name</h4>
 
     }
 
 }
-@if(Model.Publishers != null)
+@if(Model.Game.Publishers != null)
 {
     <h4>Published by:</h4>
-    foreach(Publisher publisher in Model.Publishers)
+    foreach(Publisher publisher in Model.Game.Publishers)
     {
         <h4>@publisher.Name</h4>
+
+    }
+
+}
+@if(Model.Genres != null)
+{
+    <h4>Genres:</h4>
+    foreach(GenreGameId genreGameId in Model.Genres)
+    {
+        <h4>@genreGameId.Genre.Name</h4>
 
     }
 

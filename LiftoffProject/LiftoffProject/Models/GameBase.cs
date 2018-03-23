@@ -11,9 +11,6 @@ namespace LiftoffProject.Models
     public class GameBase
     {
         [Key]
-        public int LocalId { get; set; }
-
-        //id(integer, optional),
         [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
 
@@ -38,8 +35,8 @@ namespace LiftoffProject.Models
         public string Url { get; set; }
 
         //games(Array[integer], optional)
-        [NotMapped]
-        [JsonProperty(PropertyName = "games")]
-        public int[] Games { get; set; }
+        //[NotMapped]
+        //[JsonProperty(PropertyName = "games")]
+        //public int[] Games { get; set; }
     }
 }

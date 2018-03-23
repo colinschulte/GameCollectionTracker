@@ -13,11 +13,21 @@ namespace LiftoffProject.Data
         public DbSet<Cover> Covers { get; set; }
         public DbSet<Developer> Developers { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
-        //public DbSet<ReleaseDate> ReldeaseDates { get; set; }
+        public DbSet<ReleaseDate> ReleaseDates { get; set; }
+        public DbSet<Genre> Genres { get; set; }
+        public DbSet<GenreGameId> GenreGameIds { get; set; }
+
 
         public GameDbContext(DbContextOptions<GameDbContext> options) 
             : base(options) 
         { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<GenreGameId>()
+                .HasKey(g => new { g.GenreId, g.GameId });
+        }
+
     }
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<GameDbContext>
     {

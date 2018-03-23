@@ -86,7 +86,9 @@ namespace LiftoffProject.Models
         //game_engines(Array[GameEngine], optional),
         [NotMapped]
         [JsonProperty(PropertyName = "game_engines")]
-        public int[] GameEngines { get; set; }
+        public int[] GameEngineIds { get; set; }
+
+        //public ICollection<GameEngine> GameEngines { get; set; }
 
         //category(integer, optional),
         [JsonProperty(PropertyName = "category")]
@@ -119,7 +121,11 @@ namespace LiftoffProject.Models
         //genres(Array[Genre], optional),
         [NotMapped]
         [JsonProperty(PropertyName = "genres")]
-        public int[] Genres{ get; set; }
+        public int[] GenreIds{ get; set; }
+
+        public ICollection<Genre> Genres { get; set; }
+
+        public IList<GenreGameId> GenreGameIds { get; set; }
 
         //first_release_date(integer, optional),
         [JsonProperty(PropertyName = "first_release_date")]
@@ -136,7 +142,9 @@ namespace LiftoffProject.Models
         //release_dates(Array[Inline Model 1], optional),
         [NotMapped]
         [JsonProperty(PropertyName = "release_date")]
-        public int[] ReleaseDates { get; set; }
+        public int[] ReleaseDateIds { get; set; }
+
+        public ICollection<ReleaseDate> ReleaseDates { get; set; }
 
         //alternative_names(Array[Inline Model 2], optional),
         [NotMapped]

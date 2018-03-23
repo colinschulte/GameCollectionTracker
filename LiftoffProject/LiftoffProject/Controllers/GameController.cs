@@ -62,15 +62,28 @@ namespace LiftoffProject.Controllers
 
         async Task<Publisher[]> GetPublisherAsync(string path)
         {
-            Publisher[] devs = null;
-            string jsonDev = "";
+            Publisher[] pubs = null;
+            string jsonPub = "";
             HttpResponseMessage response = await client.GetAsync(path);
             if (response.IsSuccessStatusCode)
             {
-                jsonDev = await response.Content.ReadAsStringAsync();
-                devs = JsonConvert.DeserializeObject<Publisher[]>(jsonDev);
+                jsonPub = await response.Content.ReadAsStringAsync();
+                pubs = JsonConvert.DeserializeObject<Publisher[]>(jsonPub);
             }
-            return devs;
+            return pubs;
+        }
+
+        async Task<Genre[]> GetGenreAsync(string path)
+        {
+            Genre[] genres = null;
+            string jsonGenre = "";
+            HttpResponseMessage response = await client.GetAsync(path);
+            if (response.IsSuccessStatusCode)
+            {
+                jsonGenre = await response.Content.ReadAsStringAsync();
+                genres = JsonConvert.DeserializeObject<Genre[]>(jsonGenre);
+            }
+            return genres;
         }
 
         public IActionResult Index()
@@ -171,6 +184,43 @@ namespace LiftoffProject.Controllers
                             context.Publishers.Add(pub);
                         }
                     }
+                    if (newGame.GenreIds != null)
+                    {
+                        string genreIds = "";
+                        bool first = true;
+                        foreach (int genreId in newGame.GenreIds)
+                        {
+                            if (first == true)
+                            {
+                                genreIds += (genreId.ToString());
+                                first = false;
+                            }
+                            else
+                            {
+                                genreIds += ("," + genreId.ToString());
+                            }
+                        }
+                        Genre[] genres = await GetGenreAsync("genres/" + genreIds);
+                        foreach (Genre genre in genres)
+                        {
+                            if (!context.Genres.Any(g => g.Id == genre.Id))
+                            {
+                                context.Genres.Add(genre);
+                                context.SaveChanges();
+                            }
+
+                            //int genreId = genre.LocalId;
+                            //int gameId = newGame.LocalId;
+
+                            GenreGameId genreGameId = new GenreGameId
+                            {
+                                GenreId = genre.LocalId,
+                                GameId = newGame.LocalId
+
+                            };
+                            context.GenreGameIds.Add(genreGameId);
+                        }
+                    }
                 }
                 context.SaveChanges();
                 return Redirect("/Game");
@@ -192,6 +242,9 @@ namespace LiftoffProject.Controllers
         public IActionResult Details(int gameId)
         {
             Game game = context.Games.Single(g => g.LocalId == gameId);
+
+            List<GenreGameId> genreGameIds = null;
+
             if (game.CoverId != 0)
             {
                 game.Cover = context.Covers.Find(game.CoverId);
@@ -209,7 +262,21 @@ namespace LiftoffProject.Controllers
                                    select p).ToArray();
             }
 
-            return View(game);
+            if (context.GenreGameIds.Any(g => g.GameId == game.Id))
+            {
+                genreGameIds = context
+                    .GenreGameIds
+                    .Include(ggid => ggid.Genre)
+                    .Where(ggid => ggid.GameId == game.Id)
+                    .ToList();
+            }
+            GameDetailsViewModel viewModel = new GameDetailsViewModel
+            {
+                Game = game,
+                Genres = genreGameIds
+            };
+
+            return View(viewModel);
         }
 
         public async Task<IActionResult> Test()
