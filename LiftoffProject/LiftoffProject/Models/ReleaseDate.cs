@@ -9,10 +9,8 @@ namespace LiftoffProject.Models
 {
     public class ReleaseDate
     {
-        [Key]
-        public int LocalId { get; set; }
-
         //id(integer, optional),
+        [Key]
         [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
 

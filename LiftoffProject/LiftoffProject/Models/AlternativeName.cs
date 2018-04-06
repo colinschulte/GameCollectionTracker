@@ -10,7 +10,7 @@ namespace LiftoffProject.Models
     public class AlternativeName
     {
         [Key]
-        public int LocalId { get; set; }
+        public int Id { get; set; }
 
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }

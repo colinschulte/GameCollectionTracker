@@ -17,7 +17,7 @@ else
         @foreach (Game game in Model)
         {
             <tr>
-                <td><a asp-controller="Game" asp-action="Details" asp-route-gameId="@game.LocalId">@game.Name</a></td>
+                <td><a asp-controller="Game" asp-action="Details" asp-route-gameId="@game.Id">@game.Name</a></td>
                 @if (game.Cover != null)
                 {
                 <td><img src="@game.Cover.Url" alt="@game.Name" /></td>
@@ -26,7 +26,7 @@ else
                 {
                     <td>No Box Art</td>
                 }
-                <td><a asp-controller="Game" asp-action="Delete" asp-route-gameId="@game.LocalId">Delete</a></td>
+                <td><a asp-controller="Game" asp-action="Delete" asp-route-gameId="@game.Id">Delete</a></td>
             </tr>
         }
 

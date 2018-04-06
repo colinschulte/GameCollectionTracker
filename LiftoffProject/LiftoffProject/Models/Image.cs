@@ -11,7 +11,7 @@ namespace LiftoffProject.Models
     public class Image
     {
         [Key]
-        public int LocalId { get; set; }
+        public int Id { get; set; }
 
         [JsonProperty(PropertyName = "url")]
         public string Url { get; set; }

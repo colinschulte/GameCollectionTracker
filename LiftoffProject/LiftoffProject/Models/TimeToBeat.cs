@@ -10,7 +10,7 @@ namespace LiftoffProject.Models
     public class TimeToBeat
     {
         [Key]
-        public int LocalId { get; set; }
+        public int Id { get; set; }
 
         [JsonProperty(PropertyName = "hastly")]
         public int Hastly { get; set; }

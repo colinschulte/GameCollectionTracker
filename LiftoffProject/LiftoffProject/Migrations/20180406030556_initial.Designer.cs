@@ -11,8 +11,8 @@ using System;
 namespace LiftoffProject.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    [Migration("20180224081853_created publishers table")]
-    partial class createdpublisherstable
+    [Migration("20180406030556_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -57,7 +57,7 @@ namespace LiftoffProject.Migrations
 
             modelBuilder.Entity("LiftoffProject.Models.Game", b =>
                 {
-                    b.Property<int>("LocalId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<float>("AggregatedRating");
@@ -78,8 +78,6 @@ namespace LiftoffProject.Migrations
 
                     b.Property<int>("Hypes");
 
-                    b.Property<int>("Id");
-
                     b.Property<string>("Name");
 
                     b.Property<float>("Popularity");
@@ -98,6 +96,8 @@ namespace LiftoffProject.Migrations
 
                     b.Property<string>("Summary");
 
+                    b.Property<int?>("TimeToBeatId");
+
                     b.Property<float>("TotalRating");
 
                     b.Property<int>("TotalRatingCount");
@@ -106,11 +106,50 @@ namespace LiftoffProject.Migrations
 
                     b.Property<string>("Url");
 
-                    b.HasKey("LocalId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CoverId");
 
+                    b.HasIndex("TimeToBeatId");
+
                     b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("LiftoffProject.Models.Genre", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("CreatedAt");
+
+                    b.Property<int?>("GameId");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Slug");
+
+                    b.Property<long>("UpdatedAt");
+
+                    b.Property<string>("Url");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("Genres");
+                });
+
+            modelBuilder.Entity("LiftoffProject.Models.GenreGameId", b =>
+                {
+                    b.Property<int>("GenreId");
+
+                    b.Property<int>("GameId");
+
+                    b.HasKey("GenreId", "GameId");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("GenreGameIds");
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.Publisher", b =>
@@ -143,9 +182,44 @@ namespace LiftoffProject.Migrations
                     b.ToTable("Ratings");
                 });
 
+            modelBuilder.Entity("LiftoffProject.Models.ReleaseDate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Category");
+
+                    b.Property<int>("CreatedAt");
+
+                    b.Property<int>("Date");
+
+                    b.Property<int?>("GameId");
+
+                    b.Property<string>("Human");
+
+                    b.Property<int>("Month");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("Platform");
+
+                    b.Property<int>("Region");
+
+                    b.Property<int>("UpdatedAt");
+
+                    b.Property<int>("Year");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("ReleaseDates");
+                });
+
             modelBuilder.Entity("LiftoffProject.Models.TimeToBeat", b =>
                 {
-                    b.Property<int>("LocalId");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("Completely");
 
@@ -153,7 +227,7 @@ namespace LiftoffProject.Migrations
 
                     b.Property<int>("Normally");
 
-                    b.HasKey("LocalId");
+                    b.HasKey("Id");
 
                     b.ToTable("TimeToBeat");
                 });
@@ -172,6 +246,30 @@ namespace LiftoffProject.Migrations
                         .WithMany()
                         .HasForeignKey("CoverId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("LiftoffProject.Models.TimeToBeat", "TimeToBeat")
+                        .WithMany()
+                        .HasForeignKey("TimeToBeatId");
+                });
+
+            modelBuilder.Entity("LiftoffProject.Models.Genre", b =>
+                {
+                    b.HasOne("LiftoffProject.Models.Game")
+                        .WithMany("Genres")
+                        .HasForeignKey("GameId");
+                });
+
+            modelBuilder.Entity("LiftoffProject.Models.GenreGameId", b =>
+                {
+                    b.HasOne("LiftoffProject.Models.Game", "Game")
+                        .WithMany("GenreGameIds")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("LiftoffProject.Models.Genre", "Genre")
+                        .WithMany("GenreGameIds")
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.Publisher", b =>
@@ -182,12 +280,11 @@ namespace LiftoffProject.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("LiftoffProject.Models.TimeToBeat", b =>
+            modelBuilder.Entity("LiftoffProject.Models.ReleaseDate", b =>
                 {
                     b.HasOne("LiftoffProject.Models.Game")
-                        .WithOne("TimeToBeat")
-                        .HasForeignKey("LiftoffProject.Models.TimeToBeat", "LocalId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany("ReleaseDates")
+                        .HasForeignKey("GameId");
                 });
 #pragma warning restore 612, 618
         }

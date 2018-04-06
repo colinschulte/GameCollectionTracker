@@ -10,7 +10,7 @@ namespace LiftoffProject.Models
     public class Website
     {
         [Key]
-        public int LocalId { get; set; }
+        public int Id { get; set; }
 
         [JsonProperty(PropertyName = "category")]
         public int Category { get; set; }

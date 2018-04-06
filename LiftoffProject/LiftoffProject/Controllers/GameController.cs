@@ -24,7 +24,7 @@ namespace LiftoffProject.Controllers
             context = dbContext;
         }
 
-         HttpClient client = new HttpClient();
+        HttpClient client = new HttpClient();
 
         async Task RunAsync()
         {
@@ -130,8 +130,17 @@ namespace LiftoffProject.Controllers
                     {
                         newGame.Cover = context.Covers.Find(newGame.CoverId);
                     }
+
+                    if (!context.Games.Any(g => g.Id == newGame.Id))
                     context.Games.Add(newGame);
-                    context.SaveChanges();
+
+                    using (var transaction = context.Database.BeginTransaction())
+                    {
+                        context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Games ON;");
+                        context.SaveChanges();
+                        context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Games OFF;");
+                        transaction.Commit();
+                    }
                     if (newGame.DeveloperIds != null)
                     {
                         string devIds = "";
@@ -154,7 +163,7 @@ namespace LiftoffProject.Controllers
                         Developer[] devs = await GetDeveloperAsync("companies/" + devIds);
                         foreach (Developer dev in devs)
                         {
-                            dev.GameId = newGame.LocalId;
+                            dev.GameId = newGame.Id;
                             context.Developers.Add(dev);
                         }
                     }
@@ -180,7 +189,7 @@ namespace LiftoffProject.Controllers
                         Publisher[] pubs = await GetPublisherAsync("companies/" + pubIds);
                         foreach (Publisher pub in pubs)
                         {
-                            pub.GameId = newGame.LocalId;
+                            pub.GameId = newGame.Id;
                             context.Publishers.Add(pub);
                         }
                     }
@@ -205,17 +214,23 @@ namespace LiftoffProject.Controllers
                         {
                             if (!context.Genres.Any(g => g.Id == genre.Id))
                             {
-                                context.Genres.Add(genre);
-                                context.SaveChanges();
+                                using (var transaction = context.Database.BeginTransaction())
+                                {
+                                    context.Genres.Add(genre);
+                                    context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Genres ON;");
+                                    context.SaveChanges();
+                                    context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Genres OFF;");
+                                    transaction.Commit();
+                                }
                             }
 
-                            //int genreId = genre.LocalId;
-                            //int gameId = newGame.LocalId;
+                            //int genreId = genre.Id;
+                            //int gameId = newGame.Id;
 
                             GenreGameId genreGameId = new GenreGameId
                             {
-                                GenreId = genre.LocalId,
-                                GameId = newGame.LocalId
+                                GenreId = genre.Id,
+                                GameId = newGame.Id
 
                             };
                             context.GenreGameIds.Add(genreGameId);
@@ -233,7 +248,7 @@ namespace LiftoffProject.Controllers
 
         public IActionResult Delete(int gameId)
         {
-            Game game = context.Games.Single(g => g.LocalId == gameId);
+            Game game = context.Games.Single(g => g.Id == gameId);
             context.Games.Remove(game);
             context.SaveChanges();
             return Redirect("/Game");
@@ -241,7 +256,7 @@ namespace LiftoffProject.Controllers
 
         public IActionResult Details(int gameId)
         {
-            Game game = context.Games.Single(g => g.LocalId == gameId);
+            Game game = context.Games.Single(g => g.Id == gameId);
 
             List<GenreGameId> genreGameIds = null;
 
@@ -249,16 +264,16 @@ namespace LiftoffProject.Controllers
             {
                 game.Cover = context.Covers.Find(game.CoverId);
             }
-            if (context.Developers.Any(d => d.GameId == game.LocalId))
+            if (context.Developers.Any(d => d.GameId == game.Id))
             {
                 game.Developers = (from d in context.Developers
-                                   where d.GameId == game.LocalId
+                                   where d.GameId == game.Id
                                    select d).ToArray();
             }
-            if (context.Publishers.Any(p => p.GameId == game.LocalId))
+            if (context.Publishers.Any(p => p.GameId == game.Id))
             {
                 game.Publishers = (from p in context.Publishers
-                                   where p.GameId == game.LocalId
+                                   where p.GameId == game.Id
                                    select p).ToArray();
             }
 
