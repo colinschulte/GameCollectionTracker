@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using System.Linq;
 
 namespace LiftoffProject.Data
 {
@@ -12,7 +13,9 @@ namespace LiftoffProject.Data
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<Cover> Covers { get; set; }
         public DbSet<Developer> Developers { get; set; }
+        public DbSet<DevGame> DevGames { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
+        public DbSet<PubGame> PubGames { get; set; }
         public DbSet<ReleaseDate> ReleaseDates { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<GenreGameId> GenreGameIds { get; set; }
@@ -26,6 +29,15 @@ namespace LiftoffProject.Data
         {
             modelBuilder.Entity<GenreGameId>()
                 .HasKey(g => new { g.GenreId, g.GameId });
+
+            modelBuilder.Entity<DevGame>()
+                .HasKey(d => new { d.DeveloperId, d.GameId });
+
+            modelBuilder.Entity<PubGame>()
+                .HasKey(p => new { p.PublisherId, p.GameId });
+            
+
+            base.OnModelCreating(modelBuilder);
         }
 
     }

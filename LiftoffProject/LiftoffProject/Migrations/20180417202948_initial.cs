@@ -92,7 +92,7 @@ namespace LiftoffProject.Migrations
                         column: x => x.CoverId,
                         principalTable: "Covers",
                         principalColumn: "CoverId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Games_TimeToBeat_TimeToBeatId",
                         column: x => x.TimeToBeatId,
@@ -118,7 +118,7 @@ namespace LiftoffProject.Migrations
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -162,7 +162,7 @@ namespace LiftoffProject.Migrations
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -195,6 +195,30 @@ namespace LiftoffProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DevGame",
+                columns: table => new
+                {
+                    DeveloperId = table.Column<int>(nullable: false),
+                    GameId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DevGame", x => new { x.DeveloperId, x.GameId });
+                    table.ForeignKey(
+                        name: "FK_DevGame_Developers_DeveloperId",
+                        column: x => x.DeveloperId,
+                        principalTable: "Developers",
+                        principalColumn: "CompanyId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_DevGame_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GenreGameIds",
                 columns: table => new
                 {
@@ -209,18 +233,47 @@ namespace LiftoffProject.Migrations
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_GenreGameIds_Genres_GenreId",
                         column: x => x.GenreId,
                         principalTable: "Genres",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PubGame",
+                columns: table => new
+                {
+                    PublisherId = table.Column<int>(nullable: false),
+                    GameId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PubGame", x => new { x.PublisherId, x.GameId });
+                    table.ForeignKey(
+                        name: "FK_PubGame_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PubGame_Publishers_PublisherId",
+                        column: x => x.PublisherId,
+                        principalTable: "Publishers",
+                        principalColumn: "CompanyId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Developers_GameId",
                 table: "Developers",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DevGame_GameId",
+                table: "DevGame",
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
@@ -244,6 +297,11 @@ namespace LiftoffProject.Migrations
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PubGame_GameId",
+                table: "PubGame",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Publishers_GameId",
                 table: "Publishers",
                 column: "GameId");
@@ -257,13 +315,13 @@ namespace LiftoffProject.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Developers");
+                name: "DevGame");
 
             migrationBuilder.DropTable(
                 name: "GenreGameIds");
 
             migrationBuilder.DropTable(
-                name: "Publishers");
+                name: "PubGame");
 
             migrationBuilder.DropTable(
                 name: "Ratings");
@@ -272,7 +330,13 @@ namespace LiftoffProject.Migrations
                 name: "ReleaseDates");
 
             migrationBuilder.DropTable(
+                name: "Developers");
+
+            migrationBuilder.DropTable(
                 name: "Genres");
+
+            migrationBuilder.DropTable(
+                name: "Publishers");
 
             migrationBuilder.DropTable(
                 name: "Games");

@@ -132,23 +132,23 @@ namespace LiftoffProject.Controllers
                     }
 
                     if (!context.Games.Any(g => g.Id == newGame.Id))
-                    context.Games.Add(newGame);
-
-                    using (var transaction = context.Database.BeginTransaction())
                     {
-                        context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Games ON;");
-                        context.SaveChanges();
-                        context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Games OFF;");
-                        transaction.Commit();
+                        context.Games.Add(newGame);
+                        using (var transaction = context.Database.BeginTransaction())
+                        {
+                            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Games ON;");
+                            context.SaveChanges();
+                            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Games OFF;");
+                            transaction.Commit();
+                        }
                     }
+
                     if (newGame.DeveloperIds != null)
                     {
                         string devIds = "";
                         bool first = true;
                         foreach (int devId in newGame.DeveloperIds)
                         {
-                            if (!context.Developers.Any(d => d.CompanyId == devId))
-                            {
                                 if (first == true)
                                 {
                                     devIds += (devId.ToString());
@@ -158,13 +158,31 @@ namespace LiftoffProject.Controllers
                                 {
                                     devIds += ("," + devId.ToString());
                                 }
-                            }
                         }
                         Developer[] devs = await GetDeveloperAsync("companies/" + devIds);
                         foreach (Developer dev in devs)
                         {
-                            dev.GameId = newGame.Id;
-                            context.Developers.Add(dev);
+                            if(!context.Developers.Any(d => d.Id == dev.Id) && dev.Name != null)
+                            {
+                                context.Developers.Add(dev);
+                                using (var transaction = context.Database.BeginTransaction())
+                                {
+                                    context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Developers ON;");
+                                    context.SaveChanges();
+                                    context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Developers OFF;");
+                                    transaction.Commit();
+                                }
+                            }
+                            if(!context.DevGames.Any(dg => dg.DeveloperId == dev.Id && dg.GameId == newGame.Id))
+                            {
+                                DevGame devGame = new DevGame
+                                {
+                                    DeveloperId = dev.Id,
+                                    GameId = newGame.Id
+                                };
+                                context.DevGames.Add(devGame);
+                            }
+                            context.SaveChanges();
                         }
                     }
                     if (newGame.PublisherIds != null)
@@ -173,8 +191,6 @@ namespace LiftoffProject.Controllers
                         bool first = true;
                         foreach (int pubId in newGame.PublisherIds)
                         {
-                            if (!context.Publishers.Any(p => p.CompanyId == pubId))
-                            {
                                 if (first == true)
                                 {
                                     pubIds += (pubId.ToString());
@@ -184,13 +200,28 @@ namespace LiftoffProject.Controllers
                                 {
                                     pubIds += ("," + pubId.ToString());
                                 }
-                            }
                         }
                         Publisher[] pubs = await GetPublisherAsync("companies/" + pubIds);
                         foreach (Publisher pub in pubs)
                         {
-                            pub.GameId = newGame.Id;
-                            context.Publishers.Add(pub);
+                            if (!context.Publishers.Any(p => p.Id == pub.Id))
+                            {
+                                context.Publishers.Add(pub);
+                            }
+                            PubGame pubGame = new PubGame
+                            {
+                                PublisherId = pub.Id,
+                                GameId = newGame.Id
+                            };
+                            context.PubGames.Add(pubGame);
+                        }
+
+                        using (var transaction = context.Database.BeginTransaction())
+                        {
+                            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Publishers ON;");
+                            context.SaveChanges();
+                            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Publishers OFF;");
+                            transaction.Commit();
                         }
                     }
                     if (newGame.GenreIds != null)
@@ -214,18 +245,8 @@ namespace LiftoffProject.Controllers
                         {
                             if (!context.Genres.Any(g => g.Id == genre.Id))
                             {
-                                using (var transaction = context.Database.BeginTransaction())
-                                {
-                                    context.Genres.Add(genre);
-                                    context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Genres ON;");
-                                    context.SaveChanges();
-                                    context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Genres OFF;");
-                                    transaction.Commit();
-                                }
+                                context.Genres.Add(genre);
                             }
-
-                            //int genreId = genre.Id;
-                            //int gameId = newGame.Id;
 
                             GenreGameId genreGameId = new GenreGameId
                             {
@@ -234,10 +255,16 @@ namespace LiftoffProject.Controllers
 
                             };
                             context.GenreGameIds.Add(genreGameId);
+                            using (var transaction = context.Database.BeginTransaction())
+                            {
+                                context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Genres ON;");
+                                context.SaveChanges();
+                                context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Genres OFF;");
+                                transaction.Commit();
+                            }
                         }
                     }
                 }
-                context.SaveChanges();
                 return Redirect("/Game");
             }
             else
@@ -249,6 +276,8 @@ namespace LiftoffProject.Controllers
         public IActionResult Delete(int gameId)
         {
             Game game = context.Games.Single(g => g.Id == gameId);
+            //List<DevGame> devGames = (from )
+            //context.DevGames.Remove(context.DevGames.);
             context.Games.Remove(game);
             context.SaveChanges();
             return Redirect("/Game");
@@ -259,22 +288,28 @@ namespace LiftoffProject.Controllers
             Game game = context.Games.Single(g => g.Id == gameId);
 
             List<GenreGameId> genreGameIds = null;
+            List<DevGame> devGames = null;
+            List<PubGame> pubGames = null;
 
             if (game.CoverId != 0)
             {
                 game.Cover = context.Covers.Find(game.CoverId);
             }
-            if (context.Developers.Any(d => d.GameId == game.Id))
+            if (context.DevGames.Any(d => d.GameId == game.Id))
             {
-                game.Developers = (from d in context.Developers
-                                   where d.GameId == game.Id
-                                   select d).ToArray();
+                devGames = context
+                    .DevGames
+                    .Include(dg => dg.Developer)
+                    .Where(dg => dg.GameId == game.Id)
+                    .ToList();
             }
-            if (context.Publishers.Any(p => p.GameId == game.Id))
+            if (context.PubGames.Any(p => p.GameId == game.Id))
             {
-                game.Publishers = (from p in context.Publishers
-                                   where p.GameId == game.Id
-                                   select p).ToArray();
+                pubGames = context
+                    .PubGames
+                    .Include(pg => pg.Publisher)
+                    .Where(pg => pg.GameId == game.Id)
+                    .ToList();
             }
 
             if (context.GenreGameIds.Any(g => g.GameId == game.Id))
@@ -288,7 +323,9 @@ namespace LiftoffProject.Controllers
             GameDetailsViewModel viewModel = new GameDetailsViewModel
             {
                 Game = game,
-                Genres = genreGameIds
+                Genres = genreGameIds,
+                DevGames = devGames,
+                PubGames = pubGames
             };
 
             return View(viewModel);

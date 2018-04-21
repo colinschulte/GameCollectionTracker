@@ -76,12 +76,16 @@ namespace LiftoffProject.Models
 
         public ICollection<Developer> Developers { get; set; }
 
+        public IList<DevGame> DevGames { get; set; }
+
         //publishers(Array[integer], optional),
         [NotMapped]
         [JsonProperty(PropertyName = "publishers")]
         public int[] PublisherIds { get; set; }
 
         public ICollection<Publisher> Publishers { get; set; }
+
+        public IList<PubGame> PubGames { get; set; }
 
         //game_engines(Array[GameEngine], optional),
         [NotMapped]

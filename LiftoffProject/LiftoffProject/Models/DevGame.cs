@@ -6,11 +6,16 @@ using System.Threading.Tasks;
 
 namespace LiftoffProject.Models
 {
-    public class DeveloperId
+    public class DevGame
     {
-        public int Id { get; set; }
+        public int DeveloperId { get; set; }
 
-        [ForeignKey("Game")]
+        [ForeignKey("DeveloperId")]
+        public Developer Developer { get; set; }
+
         public int GameId { get; set; }
+
+        [ForeignKey("GameId")]
+        public Game Game { get; set; }
     }
 }

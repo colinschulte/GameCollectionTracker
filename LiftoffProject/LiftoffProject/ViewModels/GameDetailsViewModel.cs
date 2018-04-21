@@ -11,5 +11,7 @@ namespace LiftoffProject.ViewModels
         public Game Game { get; set; }
 
         public IList<GenreGameId> Genres { get; set; }
+        public IList<DevGame> DevGames { get; set; }
+        public IList<PubGame> PubGames { get; set; }
     }
 }

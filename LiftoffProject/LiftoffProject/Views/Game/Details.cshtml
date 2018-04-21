@@ -11,22 +11,22 @@
 
 <h4>@Model.Game.Summary</h4>
 
-@if(Model.Game.Developers != null)
+@if(Model.DevGames != null)
 {
     <h4>Developed by:</h4>
-    foreach(Developer developer in Model.Game.Developers)
+    foreach(DevGame devGame in Model.DevGames)
     {
-        <h4>@developer.Name</h4>
+        <h4>@devGame.Developer.Name</h4>
 
     }
 
 }
-@if(Model.Game.Publishers != null)
+@if(Model.Game.PubGames != null)
 {
     <h4>Published by:</h4>
-    foreach(Publisher publisher in Model.Game.Publishers)
+    foreach(PubGame pubGame in Model.Game.PubGames)
     {
-        <h4>@publisher.Name</h4>
+        <h4>@pubGame.Publisher.Name</h4>
 
     }
 

@@ -10,6 +10,10 @@ namespace LiftoffProject.Models
 {
     public class Developer : Company
     {
+        [NotMapped]
+        [JsonProperty(PropertyName = "games")]
+        public int[] Games { get; set; }
 
+        public IList<DevGame> DevGames { get; set; }
     }
 }

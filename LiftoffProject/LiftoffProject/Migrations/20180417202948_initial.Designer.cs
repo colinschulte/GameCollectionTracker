@@ -11,9 +11,10 @@ using System;
 namespace LiftoffProject.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    partial class GameDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180417202948_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,14 +41,14 @@ namespace LiftoffProject.Migrations
 
             modelBuilder.Entity("LiftoffProject.Models.Developer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CompanyId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("GameId");
+                    b.Property<int>("GameId");
 
                     b.Property<string>("Name");
 
-                    b.HasKey("Id");
+                    b.HasKey("CompanyId");
 
                     b.HasIndex("GameId");
 
@@ -64,7 +65,7 @@ namespace LiftoffProject.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("DevGames");
+                    b.ToTable("DevGame");
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.Game", b =>
@@ -174,19 +175,19 @@ namespace LiftoffProject.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("PubGames");
+                    b.ToTable("PubGame");
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.Publisher", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CompanyId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("GameId");
+                    b.Property<int>("GameId");
 
                     b.Property<string>("Name");
 
-                    b.HasKey("Id");
+                    b.HasKey("CompanyId");
 
                     b.HasIndex("GameId");
 
@@ -261,7 +262,8 @@ namespace LiftoffProject.Migrations
                 {
                     b.HasOne("LiftoffProject.Models.Game")
                         .WithMany("Developers")
-                        .HasForeignKey("GameId");
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.DevGame", b =>
@@ -269,12 +271,12 @@ namespace LiftoffProject.Migrations
                     b.HasOne("LiftoffProject.Models.Developer", "Developer")
                         .WithMany("DevGames")
                         .HasForeignKey("DeveloperId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("LiftoffProject.Models.Game", "Game")
                         .WithMany("DevGames")
                         .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.Game", b =>
@@ -282,7 +284,7 @@ namespace LiftoffProject.Migrations
                     b.HasOne("LiftoffProject.Models.Cover", "Cover")
                         .WithMany()
                         .HasForeignKey("CoverId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("LiftoffProject.Models.TimeToBeat", "TimeToBeat")
                         .WithMany()
@@ -301,12 +303,12 @@ namespace LiftoffProject.Migrations
                     b.HasOne("LiftoffProject.Models.Game", "Game")
                         .WithMany("GenreGameIds")
                         .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("LiftoffProject.Models.Genre", "Genre")
                         .WithMany("GenreGameIds")
                         .HasForeignKey("GenreId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.PubGame", b =>
@@ -314,19 +316,20 @@ namespace LiftoffProject.Migrations
                     b.HasOne("LiftoffProject.Models.Game", "Game")
                         .WithMany("PubGames")
                         .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("LiftoffProject.Models.Publisher", "Publisher")
                         .WithMany("PubGames")
                         .HasForeignKey("PublisherId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.Publisher", b =>
                 {
                     b.HasOne("LiftoffProject.Models.Game")
                         .WithMany("Publishers")
-                        .HasForeignKey("GameId");
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.ReleaseDate", b =>

@@ -10,9 +10,9 @@ namespace LiftoffProject.Models
     public class Company
     {
         [Key]
-        public int CompanyId { get; set; }
+        [JsonProperty(PropertyName = "id")]
+        public int Id { get; set; }
 
-        public int GameId { get; set; }
 
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
