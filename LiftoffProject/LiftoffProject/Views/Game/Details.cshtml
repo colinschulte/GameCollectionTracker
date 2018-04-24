@@ -41,3 +41,23 @@
     }
 
 }
+
+@if(Model.Screenshots != null)
+{
+    foreach(Image screenshot in Model.Screenshots)
+    {
+        <img src="@screenshot.Url" alt="Screenshot" />
+
+    }
+
+}
+
+@if(Model.Videos != null)
+{
+    foreach(Video video in Model.Videos)
+    {
+        <iframe width="200" height="150" src="https://www.youtube.com/embed/@video.VideoId"></iframe>
+
+    }
+
+}

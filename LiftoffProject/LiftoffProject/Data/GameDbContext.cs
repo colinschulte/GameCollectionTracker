@@ -9,16 +9,18 @@ namespace LiftoffProject.Data
 {
         public class GameDbContext : DbContext
     {
-        public DbSet<Game> Games { get; set; }
-        public DbSet<Rating> Ratings { get; set; }
         public DbSet<Cover> Covers { get; set; }
         public DbSet<Developer> Developers { get; set; }
         public DbSet<DevGame> DevGames { get; set; }
-        public DbSet<Publisher> Publishers { get; set; }
-        public DbSet<PubGame> PubGames { get; set; }
-        public DbSet<ReleaseDate> ReleaseDates { get; set; }
+        public DbSet<Game> Games { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<GenreGameId> GenreGameIds { get; set; }
+        public DbSet<Publisher> Publishers { get; set; }
+        public DbSet<PubGame> PubGames { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
+        public DbSet<ReleaseDate> ReleaseDates { get; set; }
+        public DbSet<Image> Screenshots { get; set; }
+        public DbSet<Video> Videos { get; set; }
 
 
         public GameDbContext(DbContextOptions<GameDbContext> options) 

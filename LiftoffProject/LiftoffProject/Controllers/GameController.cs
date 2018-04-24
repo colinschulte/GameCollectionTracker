@@ -143,6 +143,26 @@ namespace LiftoffProject.Controllers
                         }
                     }
 
+                    if (newGame.Screenshots != null)
+                    {
+                        foreach(Image screenshot in newGame.Screenshots)
+                        {
+                            screenshot.GameId = newGame.Id;
+                            context.Screenshots.Add(screenshot);
+                        }
+                        context.SaveChanges();
+                    }
+
+                    if (newGame.Videos != null)
+                    {
+                        foreach(Video video in newGame.Videos)
+                        {
+                            video.GameId = newGame.Id;
+                            context.Videos.Add(video);
+                        }
+                        context.SaveChanges();
+                    }
+
                     if (newGame.DeveloperIds != null)
                     {
                         string devIds = "";
@@ -265,22 +285,22 @@ namespace LiftoffProject.Controllers
                         }
                     }
                 }
-                return Redirect("/Game");
+                return Redirect("/game");
             }
             else
             {
-                return Redirect("/Game/Add");
+                return Redirect("/game/add");
             }
         }
 
         public IActionResult Delete(int gameId)
         {
             Game game = context.Games.Single(g => g.Id == gameId);
-            //List<DevGame> devGames = (from )
-            //context.DevGames.Remove(context.DevGames.);
             context.Games.Remove(game);
+            context.Screenshots.RemoveRange(context.Screenshots.Where(s => s.GameId == game.Id));
+            context.Videos.RemoveRange(context.Videos.Where(v => v.GameId == game.Id));
             context.SaveChanges();
-            return Redirect("/Game");
+            return Redirect("/game");
         }
 
         public IActionResult Details(int gameId)
@@ -290,11 +310,30 @@ namespace LiftoffProject.Controllers
             List<GenreGameId> genreGameIds = null;
             List<DevGame> devGames = null;
             List<PubGame> pubGames = null;
+            List<Image> screenshots = null;
+            List<Video> videos = null;
 
             if (game.CoverId != 0)
             {
                 game.Cover = context.Covers.Find(game.CoverId);
             }
+
+            if (context.Screenshots.Any(s => s.GameId == game.Id))
+            {
+                screenshots = context
+                    .Screenshots
+                    .Where(s => s.GameId == game.Id)
+                    .ToList();
+            }
+
+            if (context.Videos.Any(v => v.GameId == game.Id))
+            {
+                videos = context
+                    .Videos
+                    .Where(v => v.GameId == game.Id)
+                    .ToList();
+            }
+
             if (context.DevGames.Any(d => d.GameId == game.Id))
             {
                 devGames = context
@@ -325,7 +364,9 @@ namespace LiftoffProject.Controllers
                 Game = game,
                 Genres = genreGameIds,
                 DevGames = devGames,
-                PubGames = pubGames
+                PubGames = pubGames,
+                Screenshots = screenshots,
+                Videos = videos
             };
 
             return View(viewModel);

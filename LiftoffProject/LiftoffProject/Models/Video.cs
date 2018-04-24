@@ -17,5 +17,7 @@ namespace LiftoffProject.Models
 
         [JsonProperty(PropertyName = "video_id")]
         public string VideoId { get; set; }
+
+        public int GameId { get; set; }
     }
 }
