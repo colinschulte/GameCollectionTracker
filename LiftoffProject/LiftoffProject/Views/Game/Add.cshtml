@@ -10,6 +10,11 @@
         <span asp-validation-for="Name"></span>
     </div>
 
+    @if (TempData["NoResults"] as string == "NoResults")
+    {
+        <p>Your search did not find any matches. Please try a different search.</p>
+    }
+
     <input type="submit" value="Search" />
 
 </form>

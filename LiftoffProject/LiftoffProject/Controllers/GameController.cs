@@ -110,7 +110,14 @@ namespace LiftoffProject.Controllers
             if (ModelState.IsValid)
             {
                 var response = await GetGameAsync("/games/?search=" + addGameViewModel.Name + "&fields=name");
-                TempData["response"] = response;
+                if(response.Length == 0)
+                {
+                    TempData["NoResults"] = "NoResults";
+                }
+                else
+                {
+                    TempData["response"] = response;
+                }
             }
 
             return View(addGameViewModel);
