@@ -5,28 +5,32 @@ using System.Collections.Generic;
 
 namespace LiftoffProject.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class addedscreenshots : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Games",
+                name: "Screenshots",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: true)
+                    CloudinaryId = table.Column<string>(nullable: true),
+                    GameId = table.Column<int>(nullable: false),
+                    Height = table.Column<string>(nullable: true),
+                    Url = table.Column<string>(nullable: true),
+                    Width = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Games", x => x.ID);
+                    table.PrimaryKey("PK_Screenshots", x => x.Id);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Games");
+                name: "Screenshots");
         }
     }
 }
