@@ -11,8 +11,8 @@ using System;
 namespace LiftoffProject.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    [Migration("20180424061556_added screenshots")]
-    partial class addedscreenshots
+    [Migration("20200306034552_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -276,6 +276,22 @@ namespace LiftoffProject.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TimeToBeat");
+                });
+
+            modelBuilder.Entity("LiftoffProject.Models.Video", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("GameId");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("VideoId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Videos");
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.Developer", b =>

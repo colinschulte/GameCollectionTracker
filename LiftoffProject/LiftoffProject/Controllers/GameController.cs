@@ -28,9 +28,9 @@ namespace LiftoffProject.Controllers
 
         async Task RunAsync()
         {
-            client.BaseAddress = new Uri("https://api-2445582011268.apicast.io/");
+            client.BaseAddress = new Uri("https://api-v3.igdb.com");
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Add("user-key","53cd1e93d56afabd2fb7e79f1f54509f");
+            client.DefaultRequestHeaders.Add("user-key", "60f6bd1ffa2f74cc67a2841e4816466f");
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
@@ -133,9 +133,11 @@ namespace LiftoffProject.Controllers
                 var games = await GetGameAsync("games/" + game.Id);
                 foreach (Game newGame in games)
                 {
-                    if (newGame.CoverId != 0)
+                    if (newGame.Cover != null)
                     {
-                        newGame.Cover = context.Covers.Find(newGame.CoverId);
+                        Cover newCover = context.Covers.Find(newGame.Cover);
+                        context.Covers.Add(newCover);
+                        context.SaveChanges();
                     }
 
                     if (!context.Games.Any(g => g.Id == newGame.Id))

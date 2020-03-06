@@ -40,6 +40,23 @@ namespace LiftoffProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Screenshots",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CloudinaryId = table.Column<string>(nullable: true),
+                    GameId = table.Column<int>(nullable: false),
+                    Height = table.Column<string>(nullable: true),
+                    Url = table.Column<string>(nullable: true),
+                    Width = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Screenshots", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TimeToBeat",
                 columns: table => new
                 {
@@ -52,6 +69,21 @@ namespace LiftoffProject.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TimeToBeat", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Videos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    GameId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    VideoId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Videos", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -92,7 +124,7 @@ namespace LiftoffProject.Migrations
                         column: x => x.CoverId,
                         principalTable: "Covers",
                         principalColumn: "CoverId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Games_TimeToBeat_TimeToBeatId",
                         column: x => x.TimeToBeatId,
@@ -105,14 +137,14 @@ namespace LiftoffProject.Migrations
                 name: "Developers",
                 columns: table => new
                 {
-                    CompanyId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    GameId = table.Column<int>(nullable: false),
+                    GameId = table.Column<int>(nullable: true),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Developers", x => x.CompanyId);
+                    table.PrimaryKey("PK_Developers", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Developers_Games_GameId",
                         column: x => x.GameId,
@@ -149,14 +181,14 @@ namespace LiftoffProject.Migrations
                 name: "Publishers",
                 columns: table => new
                 {
-                    CompanyId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    GameId = table.Column<int>(nullable: false),
+                    GameId = table.Column<int>(nullable: true),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Publishers", x => x.CompanyId);
+                    table.PrimaryKey("PK_Publishers", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Publishers_Games_GameId",
                         column: x => x.GameId,
@@ -195,7 +227,7 @@ namespace LiftoffProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DevGame",
+                name: "DevGames",
                 columns: table => new
                 {
                     DeveloperId = table.Column<int>(nullable: false),
@@ -203,19 +235,19 @@ namespace LiftoffProject.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DevGame", x => new { x.DeveloperId, x.GameId });
+                    table.PrimaryKey("PK_DevGames", x => new { x.DeveloperId, x.GameId });
                     table.ForeignKey(
-                        name: "FK_DevGame_Developers_DeveloperId",
+                        name: "FK_DevGames_Developers_DeveloperId",
                         column: x => x.DeveloperId,
                         principalTable: "Developers",
-                        principalColumn: "CompanyId",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DevGame_Games_GameId",
+                        name: "FK_DevGames_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -233,17 +265,17 @@ namespace LiftoffProject.Migrations
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_GenreGameIds_Genres_GenreId",
                         column: x => x.GenreId,
                         principalTable: "Genres",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PubGame",
+                name: "PubGames",
                 columns: table => new
                 {
                     PublisherId = table.Column<int>(nullable: false),
@@ -251,19 +283,19 @@ namespace LiftoffProject.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PubGame", x => new { x.PublisherId, x.GameId });
+                    table.PrimaryKey("PK_PubGames", x => new { x.PublisherId, x.GameId });
                     table.ForeignKey(
-                        name: "FK_PubGame_Games_GameId",
+                        name: "FK_PubGames_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PubGame_Publishers_PublisherId",
+                        name: "FK_PubGames_Publishers_PublisherId",
                         column: x => x.PublisherId,
                         principalTable: "Publishers",
-                        principalColumn: "CompanyId",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -272,8 +304,8 @@ namespace LiftoffProject.Migrations
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DevGame_GameId",
-                table: "DevGame",
+                name: "IX_DevGames_GameId",
+                table: "DevGames",
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
@@ -297,8 +329,8 @@ namespace LiftoffProject.Migrations
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PubGame_GameId",
-                table: "PubGame",
+                name: "IX_PubGames_GameId",
+                table: "PubGames",
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
@@ -315,19 +347,25 @@ namespace LiftoffProject.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DevGame");
+                name: "DevGames");
 
             migrationBuilder.DropTable(
                 name: "GenreGameIds");
 
             migrationBuilder.DropTable(
-                name: "PubGame");
+                name: "PubGames");
 
             migrationBuilder.DropTable(
                 name: "Ratings");
 
             migrationBuilder.DropTable(
                 name: "ReleaseDates");
+
+            migrationBuilder.DropTable(
+                name: "Screenshots");
+
+            migrationBuilder.DropTable(
+                name: "Videos");
 
             migrationBuilder.DropTable(
                 name: "Developers");
