@@ -22,9 +22,9 @@ else
         {
             <tr>
                 <td><a asp-controller="Game" asp-action="Details" asp-route-gameId="@game.Id">@game.Name</a></td>
-                @if (game.Cover != null)
+                @if (game.GameCover != null)
                 {
-                <td><img src="@game.Cover.Url" alt="@game.Name" /></td>
+                <td><img src="@game.GameCover.Url" alt="@game.Name" /></td>
                 }
                 else
                 {

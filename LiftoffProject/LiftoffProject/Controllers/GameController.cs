@@ -30,7 +30,7 @@ namespace LiftoffProject.Controllers
         {
             client.BaseAddress = new Uri("https://api-v3.igdb.com");
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Add("user-key", "60f6bd1ffa2f74cc67a2841e4816466f");
+            client.DefaultRequestHeaders.Add("user-key", "46de38ddead6ac81de90921b389143bb ");
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
@@ -45,6 +45,34 @@ namespace LiftoffProject.Controllers
                 games = JsonConvert.DeserializeObject<Game[]>(jsonGame);
             }
             return games;
+        }
+
+        async Task<Game[]> GetGameAsync(string path, string id)
+        {
+            Game[] games = null;
+            string jsonGame = "";
+            StringContent content = new StringContent("fields name, cover; where id = " + id + ";");
+            HttpResponseMessage response = await client.PostAsync(path, content);
+            if (response.IsSuccessStatusCode)
+            {
+                jsonGame = await response.Content.ReadAsStringAsync();
+                games = JsonConvert.DeserializeObject<Game[]>(jsonGame);
+            }
+            return games;
+        }
+
+        async Task<Cover[]> GetCoverAsync(string path, string id)
+        {
+            Cover[] covers = null;
+            string jsonCover = "";
+            StringContent content = new StringContent("fields *; where id = " + id + ";");
+            HttpResponseMessage response = await client.PostAsync(path, content);
+            if (response.IsSuccessStatusCode)
+            {
+                jsonCover = await response.Content.ReadAsStringAsync();
+                covers = JsonConvert.DeserializeObject<Cover[]>(jsonCover);
+            }
+            return covers;
         }
 
         async Task<Developer[]> GetDeveloperAsync(string path)
@@ -91,7 +119,7 @@ namespace LiftoffProject.Controllers
             ViewBag.Title = "My Collection";
 
             IList<Game> games = context.Games
-                .Include(g => g.Cover)
+                .Include(g => g.GameCover)
                 .ToList();
             return View(games);
         }
@@ -124,20 +152,33 @@ namespace LiftoffProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCollection(Game game)
+        public async Task<IActionResult> AddCollection(int id)
         {
             if (ModelState.IsValid)
             {
+                //Console.WriteLine(id);
 
                 RunAsync().GetAwaiter().GetResult();
-                var games = await GetGameAsync("games/" + game.Id);
+                var games = await GetGameAsync("/games/", id.ToString());
                 foreach (Game newGame in games)
                 {
-                    if (newGame.Cover != null)
+                    if (newGame.Cover != 0)
                     {
-                        Cover newCover = context.Covers.Find(newGame.Cover);
-                        context.Covers.Add(newCover);
-                        context.SaveChanges();
+                        if (!context.Covers.Any(c => c.id == newGame.Cover))
+                        {
+                            var covers = await GetCoverAsync("/covers/", newGame.Cover.ToString());
+                            foreach (Cover newCover in covers)
+                            {
+                                context.Covers.Add(newCover);
+                                using (var transaction = context.Database.BeginTransaction())
+                                {
+                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Covers ON;");
+                                    context.SaveChanges();
+                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Covers OFF;");
+                                    transaction.Commit();
+                                }
+                            }
+                        }
                     }
 
                     if (!context.Games.Any(g => g.Id == newGame.Id))
@@ -145,9 +186,9 @@ namespace LiftoffProject.Controllers
                         context.Games.Add(newGame);
                         using (var transaction = context.Database.BeginTransaction())
                         {
-                            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Games ON;");
+                            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Games ON;");
                             context.SaveChanges();
-                            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Games OFF;");
+                            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Games OFF;");
                             transaction.Commit();
                         }
                     }
@@ -196,9 +237,9 @@ namespace LiftoffProject.Controllers
                                 context.Developers.Add(dev);
                                 using (var transaction = context.Database.BeginTransaction())
                                 {
-                                    context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Developers ON;");
+                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Developers ON;");
                                     context.SaveChanges();
-                                    context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Developers OFF;");
+                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Developers OFF;");
                                     transaction.Commit();
                                 }
                             }
@@ -247,9 +288,9 @@ namespace LiftoffProject.Controllers
 
                         using (var transaction = context.Database.BeginTransaction())
                         {
-                            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Publishers ON;");
+                            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Publishers ON;");
                             context.SaveChanges();
-                            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Publishers OFF;");
+                            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Publishers OFF;");
                             transaction.Commit();
                         }
                     }
@@ -286,9 +327,9 @@ namespace LiftoffProject.Controllers
                             context.GenreGameIds.Add(genreGameId);
                             using (var transaction = context.Database.BeginTransaction())
                             {
-                                context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Genres ON;");
+                                context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Genres ON;");
                                 context.SaveChanges();
-                                context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Genres OFF;");
+                                context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Genres OFF;");
                                 transaction.Commit();
                             }
                         }
@@ -322,9 +363,9 @@ namespace LiftoffProject.Controllers
             List<Image> screenshots = null;
             List<Video> videos = null;
 
-            if (game.CoverId != 0)
+            if (game.Cover != 0)
             {
-                game.Cover = context.Covers.Find(game.CoverId);
+                game.GameCover = context.Covers.Find(game.Cover);
             }
 
             if (context.Screenshots.Any(s => s.GameId == game.Id))

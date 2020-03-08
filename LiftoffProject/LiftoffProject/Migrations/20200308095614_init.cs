@@ -1,11 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LiftoffProject.Migrations
 {
-    public partial class initial : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,16 +10,17 @@ namespace LiftoffProject.Migrations
                 name: "Covers",
                 columns: table => new
                 {
-                    CoverId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CloudinaryId = table.Column<string>(nullable: true),
-                    Height = table.Column<string>(nullable: true),
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    image_id = table.Column<string>(nullable: true),
                     Url = table.Column<string>(nullable: true),
-                    Width = table.Column<int>(nullable: false)
+                    game = table.Column<int>(nullable: false),
+                    Width = table.Column<int>(nullable: false),
+                    Height = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Covers", x => x.CoverId);
+                    table.PrimaryKey("PK_Covers", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -30,7 +28,7 @@ namespace LiftoffProject.Migrations
                 columns: table => new
                 {
                     RatingId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     RatingInt = table.Column<int>(nullable: false),
                     Synopsis = table.Column<string>(nullable: true)
                 },
@@ -44,12 +42,12 @@ namespace LiftoffProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CloudinaryId = table.Column<string>(nullable: true),
-                    GameId = table.Column<int>(nullable: false),
-                    Height = table.Column<string>(nullable: true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Url = table.Column<string>(nullable: true),
-                    Width = table.Column<int>(nullable: false)
+                    CloudinaryId = table.Column<string>(nullable: true),
+                    Width = table.Column<int>(nullable: false),
+                    Height = table.Column<string>(nullable: true),
+                    GameId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -61,10 +59,10 @@ namespace LiftoffProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Completely = table.Column<int>(nullable: false),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Hastly = table.Column<int>(nullable: false),
-                    Normally = table.Column<int>(nullable: false)
+                    Normally = table.Column<int>(nullable: false),
+                    Completely = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,10 +74,10 @@ namespace LiftoffProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    GameId = table.Column<int>(nullable: false),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
-                    VideoId = table.Column<string>(nullable: true)
+                    VideoId = table.Column<string>(nullable: true),
+                    GameId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -91,40 +89,41 @@ namespace LiftoffProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    AggregatedRating = table.Column<float>(nullable: false),
-                    AggregatedRatingCount = table.Column<int>(nullable: false),
-                    Category = table.Column<int>(nullable: false),
-                    Collection = table.Column<long>(nullable: false),
-                    CoverId = table.Column<int>(nullable: false),
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
                     CreatedAt = table.Column<long>(nullable: false),
-                    FirstReleaseDate = table.Column<long>(nullable: false),
+                    UpdatedAt = table.Column<long>(nullable: false),
+                    Slug = table.Column<string>(nullable: true),
+                    Url = table.Column<string>(nullable: true),
+                    Summary = table.Column<string>(nullable: true),
+                    Storyline = table.Column<string>(nullable: true),
+                    Collection = table.Column<long>(nullable: false),
                     Franchise = table.Column<long>(nullable: false),
                     Hypes = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    Popularity = table.Column<float>(nullable: false),
-                    PulseCount = table.Column<int>(nullable: false),
                     Rating = table.Column<float>(nullable: false),
-                    RatingCount = table.Column<int>(nullable: false),
-                    Slug = table.Column<string>(nullable: true),
-                    Status = table.Column<int>(nullable: false),
-                    Storyline = table.Column<string>(nullable: true),
-                    Summary = table.Column<string>(nullable: true),
-                    TimeToBeatId = table.Column<int>(nullable: true),
+                    Popularity = table.Column<float>(nullable: false),
+                    AggregatedRating = table.Column<float>(nullable: false),
+                    AggregatedRatingCount = table.Column<int>(nullable: false),
                     TotalRating = table.Column<float>(nullable: false),
                     TotalRatingCount = table.Column<int>(nullable: false),
-                    UpdatedAt = table.Column<long>(nullable: false),
-                    Url = table.Column<string>(nullable: true)
+                    RatingCount = table.Column<int>(nullable: false),
+                    Category = table.Column<int>(nullable: false),
+                    TimeToBeatId = table.Column<int>(nullable: true),
+                    FirstReleaseDate = table.Column<long>(nullable: false),
+                    Status = table.Column<int>(nullable: false),
+                    PulseCount = table.Column<int>(nullable: false),
+                    GameCoverid = table.Column<int>(nullable: true),
+                    Cover = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Games", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Games_Covers_CoverId",
-                        column: x => x.CoverId,
+                        name: "FK_Games_Covers_GameCoverid",
+                        column: x => x.GameCoverid,
                         principalTable: "Covers",
-                        principalColumn: "CoverId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Games_TimeToBeat_TimeToBeatId",
                         column: x => x.TimeToBeatId,
@@ -138,9 +137,9 @@ namespace LiftoffProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    GameId = table.Column<int>(nullable: true),
-                    Name = table.Column<string>(nullable: true)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
+                    GameId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -158,13 +157,13 @@ namespace LiftoffProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CreatedAt = table.Column<long>(nullable: false),
-                    GameId = table.Column<int>(nullable: true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
-                    Slug = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<long>(nullable: false),
                     UpdatedAt = table.Column<long>(nullable: false),
-                    Url = table.Column<string>(nullable: true)
+                    Slug = table.Column<string>(nullable: true),
+                    Url = table.Column<string>(nullable: true),
+                    GameId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -182,9 +181,9 @@ namespace LiftoffProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    GameId = table.Column<int>(nullable: true),
-                    Name = table.Column<string>(nullable: true)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
+                    GameId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -202,18 +201,18 @@ namespace LiftoffProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Category = table.Column<int>(nullable: false),
-                    CreatedAt = table.Column<int>(nullable: false),
-                    Date = table.Column<int>(nullable: false),
-                    GameId = table.Column<int>(nullable: true),
-                    Human = table.Column<string>(nullable: true),
-                    Month = table.Column<int>(nullable: false),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
-                    Platform = table.Column<int>(nullable: false),
-                    Region = table.Column<int>(nullable: false),
+                    CreatedAt = table.Column<int>(nullable: false),
                     UpdatedAt = table.Column<int>(nullable: false),
-                    Year = table.Column<int>(nullable: false)
+                    Category = table.Column<int>(nullable: false),
+                    Platform = table.Column<int>(nullable: false),
+                    Human = table.Column<string>(nullable: true),
+                    Date = table.Column<int>(nullable: false),
+                    Region = table.Column<int>(nullable: false),
+                    Year = table.Column<int>(nullable: false),
+                    Month = table.Column<int>(nullable: false),
+                    GameId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -309,9 +308,9 @@ namespace LiftoffProject.Migrations
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Games_CoverId",
+                name: "IX_Games_GameCoverid",
                 table: "Games",
-                column: "CoverId");
+                column: "GameCoverid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Games_TimeToBeatId",
