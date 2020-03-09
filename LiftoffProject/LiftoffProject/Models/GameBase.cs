@@ -33,10 +33,6 @@ namespace LiftoffProject.Models
         //url(string, optional),
         [JsonProperty(PropertyName = "url")]
         public string Url { get; set; }
-
-        //games(Array[integer], optional)
-        //[NotMapped]
-        //[JsonProperty(PropertyName = "games")]
-        //public int[] Games { get; set; }
+        
     }
 }

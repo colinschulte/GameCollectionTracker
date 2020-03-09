@@ -124,7 +124,7 @@ namespace LiftoffProject.Models
         [JsonProperty(PropertyName = "screenshots")]
         public ICollection<Image> Screenshots { get; set; }
 
-        public Cover GameCover { get; set; }
+        public Image GameCover { get; set; }
 
         //cover(object, optional),
         [JsonProperty(PropertyName = "cover")]

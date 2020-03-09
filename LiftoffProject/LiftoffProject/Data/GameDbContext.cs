@@ -9,7 +9,7 @@ namespace LiftoffProject.Data
 {
         public class GameDbContext : DbContext
     {
-        public DbSet<Cover> Covers { get; set; }
+        public DbSet<Image> Covers { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<GenreGameId> GenreGameIds { get; set; }

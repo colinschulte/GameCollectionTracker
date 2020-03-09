@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LiftoffProject.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    [Migration("20200308232000_changed cover.height to int")]
-    partial class changedcoverheighttoint
+    [Migration("20200309004949_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,68 +20,6 @@ namespace LiftoffProject.Migrations
                 .HasAnnotation("ProductVersion", "3.1.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("LiftoffProject.Models.Cover", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Height")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Width")
-                        .HasColumnType("int");
-
-                    b.Property<int>("game")
-                        .HasColumnType("int");
-
-                    b.Property<string>("image_id")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("id");
-
-                    b.ToTable("Covers");
-                });
-
-            modelBuilder.Entity("LiftoffProject.Models.DevGame", b =>
-                {
-                    b.Property<int>("DeveloperId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.HasKey("DeveloperId", "GameId");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("DevGames");
-                });
-
-            modelBuilder.Entity("LiftoffProject.Models.Developer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("Developers");
-                });
 
             modelBuilder.Entity("LiftoffProject.Models.Game", b =>
                 {
@@ -108,9 +46,6 @@ namespace LiftoffProject.Migrations
                     b.Property<long>("CreatedAt")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("FirstReleaseDate")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("Franchise")
                         .HasColumnType("bigint");
 
@@ -126,9 +61,6 @@ namespace LiftoffProject.Migrations
                     b.Property<float>("Popularity")
                         .HasColumnType("real");
 
-                    b.Property<int>("PulseCount")
-                        .HasColumnType("int");
-
                     b.Property<float>("Rating")
                         .HasColumnType("real");
 
@@ -138,17 +70,11 @@ namespace LiftoffProject.Migrations
                     b.Property<string>("Slug")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.Property<string>("Storyline")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Summary")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("TimeToBeatId")
-                        .HasColumnType("int");
 
                     b.Property<float>("TotalRating")
                         .HasColumnType("real");
@@ -165,8 +91,6 @@ namespace LiftoffProject.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("GameCoverid");
-
-                    b.HasIndex("TimeToBeatId");
 
                     b.ToTable("Games");
                 });
@@ -220,19 +144,13 @@ namespace LiftoffProject.Migrations
 
             modelBuilder.Entity("LiftoffProject.Models.Image", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CloudinaryId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("GameId")
+                    b.Property<int>("Height")
                         .HasColumnType("int");
-
-                    b.Property<string>("Height")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
@@ -240,62 +158,15 @@ namespace LiftoffProject.Migrations
                     b.Property<int>("Width")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Screenshots");
-                });
-
-            modelBuilder.Entity("LiftoffProject.Models.PubGame", b =>
-                {
-                    b.Property<int>("PublisherId")
+                    b.Property<int>("game")
                         .HasColumnType("int");
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PublisherId", "GameId");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("PubGames");
-                });
-
-            modelBuilder.Entity("LiftoffProject.Models.Publisher", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("image_id")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.HasIndex("GameId");
-
-                    b.ToTable("Publishers");
-                });
-
-            modelBuilder.Entity("LiftoffProject.Models.Rating", b =>
-                {
-                    b.Property<int>("RatingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("RatingInt")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Synopsis")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("RatingId");
-
-                    b.ToTable("Ratings");
+                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.ReleaseDate", b =>
@@ -342,82 +213,14 @@ namespace LiftoffProject.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("ReleaseDates");
-                });
-
-            modelBuilder.Entity("LiftoffProject.Models.TimeToBeat", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Completely")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Hastly")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Normally")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TimeToBeat");
-                });
-
-            modelBuilder.Entity("LiftoffProject.Models.Video", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VideoId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Videos");
-                });
-
-            modelBuilder.Entity("LiftoffProject.Models.DevGame", b =>
-                {
-                    b.HasOne("LiftoffProject.Models.Developer", "Developer")
-                        .WithMany("DevGames")
-                        .HasForeignKey("DeveloperId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LiftoffProject.Models.Game", "Game")
-                        .WithMany("DevGames")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("LiftoffProject.Models.Developer", b =>
-                {
-                    b.HasOne("LiftoffProject.Models.Game", null)
-                        .WithMany("Developers")
-                        .HasForeignKey("GameId");
+                    b.ToTable("ReleaseDate");
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.Game", b =>
                 {
-                    b.HasOne("LiftoffProject.Models.Cover", "GameCover")
+                    b.HasOne("LiftoffProject.Models.Image", "GameCover")
                         .WithMany()
                         .HasForeignKey("GameCoverid");
-
-                    b.HasOne("LiftoffProject.Models.TimeToBeat", "TimeToBeat")
-                        .WithMany()
-                        .HasForeignKey("TimeToBeatId");
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.Genre", b =>
@@ -440,28 +243,6 @@ namespace LiftoffProject.Migrations
                         .HasForeignKey("GenreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("LiftoffProject.Models.PubGame", b =>
-                {
-                    b.HasOne("LiftoffProject.Models.Game", "Game")
-                        .WithMany("PubGames")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LiftoffProject.Models.Publisher", "Publisher")
-                        .WithMany("PubGames")
-                        .HasForeignKey("PublisherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("LiftoffProject.Models.Publisher", b =>
-                {
-                    b.HasOne("LiftoffProject.Models.Game", null)
-                        .WithMany("Publishers")
-                        .HasForeignKey("GameId");
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.ReleaseDate", b =>

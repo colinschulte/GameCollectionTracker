@@ -147,10 +147,6 @@ namespace LiftoffProject.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("Height")
                         .HasColumnType("int");
 
@@ -168,9 +164,7 @@ namespace LiftoffProject.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Screenshots");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Image");
+                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.ReleaseDate", b =>
@@ -220,16 +214,9 @@ namespace LiftoffProject.Migrations
                     b.ToTable("ReleaseDate");
                 });
 
-            modelBuilder.Entity("LiftoffProject.Models.Cover", b =>
-                {
-                    b.HasBaseType("LiftoffProject.Models.Image");
-
-                    b.HasDiscriminator().HasValue("Cover");
-                });
-
             modelBuilder.Entity("LiftoffProject.Models.Game", b =>
                 {
-                    b.HasOne("LiftoffProject.Models.Cover", "GameCover")
+                    b.HasOne("LiftoffProject.Models.Image", "GameCover")
                         .WithMany()
                         .HasForeignKey("GameCoverid");
                 });

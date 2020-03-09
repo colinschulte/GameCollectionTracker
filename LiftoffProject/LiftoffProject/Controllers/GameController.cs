@@ -61,16 +61,16 @@ namespace LiftoffProject.Controllers
             return games;
         }
 
-        async Task<Cover[]> GetCoverAsync(string path, string id)
+        async Task<Image[]> GetCoverAsync(string path, string id)
         {
-            Cover[] covers = null;
+            Image[] covers = null;
             string jsonCover = "";
             StringContent content = new StringContent("fields *; where id = " + id + ";");
             HttpResponseMessage response = await client.PostAsync(path, content);
             if (response.IsSuccessStatusCode)
             {
                 jsonCover = await response.Content.ReadAsStringAsync();
-                covers = JsonConvert.DeserializeObject<Cover[]>(jsonCover);
+                covers = JsonConvert.DeserializeObject<Image[]>(jsonCover);
             }
             return covers;
         }
@@ -148,14 +148,14 @@ namespace LiftoffProject.Controllers
                         if (!context.Covers.Any(c => c.id == newGame.Cover))
                         {
                             var covers = await GetCoverAsync("/covers/", newGame.Cover.ToString());
-                            foreach (Cover newCover in covers)
+                            foreach (Image newCover in covers)
                             {
                                 context.Covers.Add(newCover);
                                 using (var transaction = context.Database.BeginTransaction())
                                 {
-                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Covers ON;");
+                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Image ON;");
                                     context.SaveChanges();
-                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Covers OFF;");
+                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Image OFF;");
                                     transaction.Commit();
                                 }
                             }
