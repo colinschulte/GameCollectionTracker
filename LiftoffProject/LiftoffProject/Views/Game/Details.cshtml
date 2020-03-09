@@ -12,26 +12,6 @@
 
 <h4>@Model.Game.Summary</h4>
 
-@if(Model.DevGames != null)
-{
-    <h4>Developed by:</h4>
-    foreach(DevGame devGame in Model.DevGames)
-    {
-        <h4>@devGame.Developer.Name</h4>
-
-    }
-
-}
-@if(Model.Game.PubGames != null)
-{
-    <h4>Published by:</h4>
-    foreach(PubGame pubGame in Model.Game.PubGames)
-    {
-        <h4>@pubGame.Publisher.Name</h4>
-
-    }
-
-}
 @if(Model.Genres != null)
 {
     <h4>Genres:</h4>
@@ -53,12 +33,3 @@
 
 }
 
-@if(Model.Videos != null)
-{
-    foreach(Video video in Model.Videos)
-    {
-        <iframe width="200" height="150" src="https://www.youtube.com/embed/@video.VideoId"></iframe>
-
-    }
-
-}

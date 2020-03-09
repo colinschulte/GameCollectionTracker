@@ -75,31 +75,6 @@ namespace LiftoffProject.Controllers
             return covers;
         }
 
-        async Task<Developer[]> GetDeveloperAsync(string path)
-        {
-            Developer[] devs = null;
-            string jsonDev = "";
-            HttpResponseMessage response = await client.GetAsync(path);
-            if (response.IsSuccessStatusCode)
-            {
-                jsonDev = await response.Content.ReadAsStringAsync();
-                devs = JsonConvert.DeserializeObject<Developer[]>(jsonDev);
-            }
-            return devs;
-        }
-
-        async Task<Publisher[]> GetPublisherAsync(string path)
-        {
-            Publisher[] pubs = null;
-            string jsonPub = "";
-            HttpResponseMessage response = await client.GetAsync(path);
-            if (response.IsSuccessStatusCode)
-            {
-                jsonPub = await response.Content.ReadAsStringAsync();
-                pubs = JsonConvert.DeserializeObject<Publisher[]>(jsonPub);
-            }
-            return pubs;
-        }
 
         async Task<Genre[]> GetGenreAsync(string path)
         {
@@ -198,108 +173,6 @@ namespace LiftoffProject.Controllers
                             transaction.Commit();
                         }
                     }
-
-                    if (newGame.Screenshots != null)
-                    {
-                        foreach(Image screenshot in newGame.Screenshots)
-                        {
-                            screenshot.GameId = newGame.Id;
-                            context.Screenshots.Add(screenshot);
-                        }
-                        context.SaveChanges();
-                    }
-
-                    if (newGame.Videos != null)
-                    {
-                        foreach(Video video in newGame.Videos)
-                        {
-                            video.GameId = newGame.Id;
-                            context.Videos.Add(video);
-                        }
-                        context.SaveChanges();
-                    }
-
-                    if (newGame.DeveloperIds != null)
-                    {
-                        string devIds = "";
-                        bool first = true;
-                        foreach (int devId in newGame.DeveloperIds)
-                        {
-                                if (first == true)
-                                {
-                                    devIds += (devId.ToString());
-                                    first = false;
-                                }
-                                else
-                                {
-                                    devIds += ("," + devId.ToString());
-                                }
-                        }
-                        Developer[] devs = await GetDeveloperAsync("companies/" + devIds);
-                        foreach (Developer dev in devs)
-                        {
-                            if(!context.Developers.Any(d => d.Id == dev.Id) && dev.Name != null)
-                            {
-                                context.Developers.Add(dev);
-                                using (var transaction = context.Database.BeginTransaction())
-                                {
-                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Developers ON;");
-                                    context.SaveChanges();
-                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Developers OFF;");
-                                    transaction.Commit();
-                                }
-                            }
-                            if(!context.DevGames.Any(dg => dg.DeveloperId == dev.Id && dg.GameId == newGame.Id))
-                            {
-                                DevGame devGame = new DevGame
-                                {
-                                    DeveloperId = dev.Id,
-                                    GameId = newGame.Id
-                                };
-                                context.DevGames.Add(devGame);
-                            }
-                            context.SaveChanges();
-                        }
-                    }
-                    if (newGame.PublisherIds != null)
-                    {
-                        string pubIds = "";
-                        bool first = true;
-                        foreach (int pubId in newGame.PublisherIds)
-                        {
-                                if (first == true)
-                                {
-                                    pubIds += (pubId.ToString());
-                                    first = false;
-                                }
-                                else
-                                {
-                                    pubIds += ("," + pubId.ToString());
-                                }
-                        }
-                        Publisher[] pubs = await GetPublisherAsync("companies/" + pubIds);
-                        foreach (Publisher pub in pubs)
-                        {
-                            if (!context.Publishers.Any(p => p.Id == pub.Id))
-                            {
-                                context.Publishers.Add(pub);
-                            }
-                            PubGame pubGame = new PubGame
-                            {
-                                PublisherId = pub.Id,
-                                GameId = newGame.Id
-                            };
-                            context.PubGames.Add(pubGame);
-                        }
-
-                        using (var transaction = context.Database.BeginTransaction())
-                        {
-                            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Publishers ON;");
-                            context.SaveChanges();
-                            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Publishers OFF;");
-                            transaction.Commit();
-                        }
-                    }
                     if (newGame.GenreIds != null)
                     {
                         string genreIds = "";
@@ -353,8 +226,6 @@ namespace LiftoffProject.Controllers
         {
             Game game = context.Games.Single(g => g.Id == gameId);
             context.Games.Remove(game);
-            context.Screenshots.RemoveRange(context.Screenshots.Where(s => s.GameId == game.Id));
-            context.Videos.RemoveRange(context.Videos.Where(v => v.GameId == game.Id));
             context.SaveChanges();
             return Redirect("/game");
         }
@@ -362,49 +233,11 @@ namespace LiftoffProject.Controllers
         public IActionResult Details(int gameId)
         {
             Game game = context.Games.Single(g => g.Id == gameId);
-
-            List<GenreGameId> genreGameIds = null;
-            List<DevGame> devGames = null;
-            List<PubGame> pubGames = null;
-            List<Image> screenshots = null;
-            List<Video> videos = null;
+            IList<GenreGameId> genreGameIds = null;
 
             if (game.Cover != 0)
             {
                 game.GameCover = context.Covers.Find(game.Cover);
-            }
-
-            if (context.Screenshots.Any(s => s.GameId == game.Id))
-            {
-                screenshots = context
-                    .Screenshots
-                    .Where(s => s.GameId == game.Id)
-                    .ToList();
-            }
-
-            if (context.Videos.Any(v => v.GameId == game.Id))
-            {
-                videos = context
-                    .Videos
-                    .Where(v => v.GameId == game.Id)
-                    .ToList();
-            }
-
-            if (context.DevGames.Any(d => d.GameId == game.Id))
-            {
-                devGames = context
-                    .DevGames
-                    .Include(dg => dg.Developer)
-                    .Where(dg => dg.GameId == game.Id)
-                    .ToList();
-            }
-            if (context.PubGames.Any(p => p.GameId == game.Id))
-            {
-                pubGames = context
-                    .PubGames
-                    .Include(pg => pg.Publisher)
-                    .Where(pg => pg.GameId == game.Id)
-                    .ToList();
             }
 
             if (context.GenreGameIds.Any(g => g.GameId == game.Id))
@@ -419,10 +252,7 @@ namespace LiftoffProject.Controllers
             {
                 Game = game,
                 Genres = genreGameIds,
-                DevGames = devGames,
-                PubGames = pubGames,
-                Screenshots = screenshots,
-                Videos = videos
+                
             };
 
             return View(viewModel);

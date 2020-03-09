@@ -74,33 +74,9 @@ namespace LiftoffProject.Models
         [JsonProperty(PropertyName = "developers")]
         public ICollection<int> DeveloperIds { get; set; }
 
-        public ICollection<Developer> Developers { get; set; }
-
-        public IList<DevGame> DevGames { get; set; }
-
-        //publishers(Array[integer], optional),
-        [NotMapped]
-        [JsonProperty(PropertyName = "publishers")]
-        public int[] PublisherIds { get; set; }
-
-        public ICollection<Publisher> Publishers { get; set; }
-
-        public IList<PubGame> PubGames { get; set; }
-
-        //game_engines(Array[GameEngine], optional),
-        [NotMapped]
-        [JsonProperty(PropertyName = "game_engines")]
-        public int[] GameEngineIds { get; set; }
-
-        //public ICollection<GameEngine> GameEngines { get; set; }
-
         //category(integer, optional),
         [JsonProperty(PropertyName = "category")]
         public int Category { get; set; }
-
-        //time_to_beat(object, optional),
-        [JsonProperty(PropertyName = "time_to_beat")]
-        public TimeToBeat TimeToBeat { get; set; }
 
         //player_perspectives(Array[PlayerPerspective], optional),
         [NotMapped]
@@ -131,18 +107,6 @@ namespace LiftoffProject.Models
 
         public IList<GenreGameId> GenreGameIds { get; set; }
 
-        //first_release_date(integer, optional),
-        [JsonProperty(PropertyName = "first_release_date")]
-        public long FirstReleaseDate { get; set; }
-
-        //status(integer, optional),
-        [JsonProperty(PropertyName = "status")]
-        public int Status { get; set; }
-
-        //pulse_count(integer, optional),
-        [JsonProperty(PropertyName = "pulse_count")]
-        public int PulseCount { get; set; }
-
         //release_dates(Array[Inline Model 1], optional),
         [NotMapped]
         [JsonProperty(PropertyName = "release_date")]
@@ -160,30 +124,10 @@ namespace LiftoffProject.Models
         [JsonProperty(PropertyName = "screenshots")]
         public ICollection<Image> Screenshots { get; set; }
 
-        //videos(Array[Inline Model 4], optional),
-        [NotMapped]
-        [JsonProperty(PropertyName = "videos")]
-        public ICollection<Video> Videos { get; set; }
-
         public Cover GameCover { get; set; }
 
         //cover(object, optional),
         [JsonProperty(PropertyName = "cover")]
         public int Cover { get; set; }
-
-        //esrb(object, optional),
-        [NotMapped]
-        [JsonProperty(PropertyName = "esrb")]
-        public Rating Esrb { get; set; }
-
-        //pegi(object, optional),
-        [NotMapped]
-        [JsonProperty(PropertyName = "pegi")]
-        public Rating Pegi{ get; set; }
-
-        //websites(Array[Inline Model 5], optional)
-        [NotMapped]
-        [JsonProperty(PropertyName = "websites")]
-        public ICollection<Website> Websites { get; set; }
     }
 }
