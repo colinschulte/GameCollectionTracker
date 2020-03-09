@@ -7,7 +7,7 @@
     <h1>@Model.Game.Name</h1>
 @if (Model.Game.GameCover != null)
 {
-<img src="@Model.Game.GameCover.Url" alt="@Model.Game.Name" />
+<img src="@Model.Game.GameCover.Url" height="@(@Model.Game.GameCover.Height/7)" width="@(@Model.Game.GameCover.Width/7)" alt="@Model.Game.Name" />
 }
 
 <h4>@Model.Game.Summary</h4>

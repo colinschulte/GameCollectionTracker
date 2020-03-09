@@ -26,6 +26,6 @@ namespace LiftoffProject.Models
         public int Width { get; set; }
 
         [JsonProperty(PropertyName = "height")]
-        public string Height { get; set; }
+        public int Height { get; set; }
     }
 }

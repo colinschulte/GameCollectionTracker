@@ -119,8 +119,16 @@ namespace LiftoffProject.Controllers
             ViewBag.Title = "My Collection";
 
             IList<Game> games = context.Games
-                .Include(g => g.GameCover)
                 .ToList();
+
+            foreach(Game game in games)
+            {
+                if (game.Cover != 0)
+                {
+                    game.GameCover = context.Covers.Find(game.Cover);
+                }
+            }
+
             return View(games);
         }
 
@@ -156,8 +164,6 @@ namespace LiftoffProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                //Console.WriteLine(id);
-
                 RunAsync().GetAwaiter().GetResult();
                 var games = await GetGameAsync("/games/", id.ToString());
                 foreach (Game newGame in games)
