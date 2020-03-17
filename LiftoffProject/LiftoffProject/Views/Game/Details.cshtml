@@ -2,20 +2,20 @@
 
 @{
     ViewBag.Title = Model.Game.Name;
- }
+}
 
-    <h1>@Model.Game.Name</h1>
-@if (Model.Game.GameCover != null)
+<h1>@Model.Game.Name</h1>
+@if (Model.Game.Cover != null)
 {
-<img src="@Model.Game.GameCover.Url" height="@(@Model.Game.GameCover.Height/7)" width="@(@Model.Game.GameCover.Width/7)" alt="@Model.Game.Name" />
+    <img src="@Model.Game.Cover.Url" height="@(@Model.Game.Cover.Height/7)" width="@(@Model.Game.Cover.Width/7)" alt="@Model.Game.Name" />
 }
 
 <h4>@Model.Game.Summary</h4>
 
-@if(Model.Genres != null)
+@if (Model.Genres != null)
 {
     <h4>Genres:</h4>
-    foreach(GenreGameId genreGameId in Model.Genres)
+    foreach (GenreGameId genreGameId in Model.Genres)
     {
         <h4>@genreGameId.Genre.Name</h4>
 
@@ -23,9 +23,20 @@
 
 }
 
-@if(Model.Screenshots != null)
+@if (Model.ReleaseDates != null)
 {
-    foreach(Image screenshot in Model.Screenshots)
+    <h4>Release Date:</h4>
+    foreach (ReleaseDate releaseDate in Model.ReleaseDates)
+    {
+        <h4>@releaseDate.Date</h4>
+
+    }
+
+}
+
+@if (Model.Screenshots != null)
+{
+    foreach (Image screenshot in Model.Screenshots)
     {
         <img src="@screenshot.Url" alt="Screenshot" />
 

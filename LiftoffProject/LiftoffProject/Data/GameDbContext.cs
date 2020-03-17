@@ -14,6 +14,7 @@ namespace LiftoffProject.Data
         public DbSet<Genre> Genres { get; set; }
         public DbSet<GenreGameId> GenreGameIds { get; set; }
         public DbSet<Image> Screenshots { get; set; }
+        public DbSet<ReleaseDate> ReleaseDates { get; set; }
 
 
 

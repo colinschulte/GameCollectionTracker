@@ -51,7 +51,7 @@ namespace LiftoffProject.Controllers
         {
             Game[] games = null;
             string jsonGame = "";
-            StringContent content = new StringContent("fields name, cover; where id = " + id + ";");
+            StringContent content = new StringContent("fields *; where id = " + id + ";");
             HttpResponseMessage response = await client.PostAsync(path, content);
             if (response.IsSuccessStatusCode)
             {
@@ -76,17 +76,32 @@ namespace LiftoffProject.Controllers
         }
 
 
-        async Task<Genre[]> GetGenreAsync(string path)
+        async Task<Genre[]> GetGenreAsync(string path, string ids)
         {
             Genre[] genres = null;
             string jsonGenre = "";
-            HttpResponseMessage response = await client.GetAsync(path);
+            StringContent content = new StringContent("fields *; where id = (" + ids + ");");
+            HttpResponseMessage response = await client.PostAsync(path, content);
             if (response.IsSuccessStatusCode)
             {
                 jsonGenre = await response.Content.ReadAsStringAsync();
                 genres = JsonConvert.DeserializeObject<Genre[]>(jsonGenre);
             }
             return genres;
+        }
+
+        async Task<ReleaseDate[]> GetReleaseDateAsync(string path, string ids)
+        {
+            ReleaseDate[] releasedates = null;
+            string jsonReleaseDate = "";
+            StringContent content = new StringContent("fields *; where id = (" + ids + ");");
+            HttpResponseMessage response = await client.PostAsync(path, content);
+            if (response.IsSuccessStatusCode)
+            {
+                jsonReleaseDate = await response.Content.ReadAsStringAsync();
+                releasedates = JsonConvert.DeserializeObject<ReleaseDate[]>(jsonReleaseDate);
+            }
+            return releasedates;
         }
 
         public IActionResult Index()
@@ -98,9 +113,9 @@ namespace LiftoffProject.Controllers
 
             foreach(Game game in games)
             {
-                if (game.Cover != 0)
+                if (game.CoverId != 0)
                 {
-                    game.GameCover = context.Covers.Find(game.Cover);
+                    game.Cover = context.Covers.Find(game.CoverId);
                 }
             }
 
@@ -121,7 +136,7 @@ namespace LiftoffProject.Controllers
             if (ModelState.IsValid)
             {
                 var response = await GetGameAsync("/games/?search=" + addGameViewModel.Name + "&fields=name");
-                if(response.Length == 0)
+                if(response == null)
                 {
                     TempData["NoResults"] = "NoResults";
                 }
@@ -143,11 +158,11 @@ namespace LiftoffProject.Controllers
                 var games = await GetGameAsync("/games/", id.ToString());
                 foreach (Game newGame in games)
                 {
-                    if (newGame.Cover != 0)
+                    if (newGame.CoverId != 0)
                     {
-                        if (!context.Covers.Any(c => c.id == newGame.Cover))
+                        if (!context.Covers.Any(c => c.id == newGame.CoverId))
                         {
-                            var covers = await GetCoverAsync("/covers/", newGame.Cover.ToString());
+                            var covers = await GetCoverAsync("/covers/", newGame.CoverId.ToString());
                             foreach (Image newCover in covers)
                             {
                                 context.Covers.Add(newCover);
@@ -189,26 +204,59 @@ namespace LiftoffProject.Controllers
                                 genreIds += ("," + genreId.ToString());
                             }
                         }
-                        Genre[] genres = await GetGenreAsync("genres/" + genreIds);
+                        Genre[] genres = await GetGenreAsync("/genres/",  genreIds);
                         foreach (Genre genre in genres)
                         {
                             if (!context.Genres.Any(g => g.Id == genre.Id))
                             {
                                 context.Genres.Add(genre);
                             }
-
-                            GenreGameId genreGameId = new GenreGameId
+                            if ((!context.GenreGameIds.Any(g => g.GenreId == genre.Id)) || (!context.GenreGameIds.Any(g => g.GameId == newGame.Id)))
                             {
-                                GenreId = genre.Id,
-                                GameId = newGame.Id
-
-                            };
-                            context.GenreGameIds.Add(genreGameId);
+                                GenreGameId genreGameId = new GenreGameId
+                                {
+                                    GenreId = genre.Id,
+                                    GameId = newGame.Id
+                                };
+                                context.GenreGameIds.Add(genreGameId);
+                            }
                             using (var transaction = context.Database.BeginTransaction())
                             {
                                 context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Genres ON;");
                                 context.SaveChanges();
                                 context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Genres OFF;");
+                                transaction.Commit();
+                            }
+                        }
+                    }
+                    if (newGame.ReleaseDateIds != null)
+                    {
+                        string releaseDateIds = "";
+                        bool first = true;
+                        foreach (int releaseDateId in newGame.ReleaseDateIds)
+                        {
+                            if (first == true)
+                            {
+                                releaseDateIds += (releaseDateId.ToString());
+                                first = false;
+                            }
+                            else
+                            {
+                                releaseDateIds += ("," + releaseDateId.ToString());
+                            }
+                        }
+                        ReleaseDate[] releaseDates = await GetReleaseDateAsync("release_dates/", releaseDateIds);
+                        foreach (ReleaseDate releaseDate in releaseDates)
+                        {
+                            if (!context.ReleaseDates.Any(g => g.Id == releaseDate.Id))
+                            {
+                                context.ReleaseDates.Add(releaseDate);
+                            }
+                            using (var transaction = context.Database.BeginTransaction())
+                            {
+                                context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.ReleaseDates ON;");
+                                context.SaveChanges();
+                                context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.ReleaseDates OFF;");
                                 transaction.Commit();
                             }
                         }
@@ -235,9 +283,9 @@ namespace LiftoffProject.Controllers
             Game game = context.Games.Single(g => g.Id == gameId);
             IList<GenreGameId> genreGameIds = null;
 
-            if (game.Cover != 0)
+            if (game.CoverId != 0)
             {
-                game.GameCover = context.Covers.Find(game.Cover);
+                game.Cover = context.Covers.Find(game.CoverId);
             }
 
             if (context.GenreGameIds.Any(g => g.GameId == game.Id))

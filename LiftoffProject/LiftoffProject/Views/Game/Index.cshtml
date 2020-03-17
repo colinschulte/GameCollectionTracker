@@ -24,10 +24,10 @@ else
         {
             <tr>
                 <td><a asp-controller="Game" asp-action="Details" asp-route-gameId="@game.Id">@game.Name</a></td>
-                @if (game.Cover != 0)
+                @if (game.CoverId != 0)
                 {
                     
-                <td><img src="@game.GameCover.Url" @*height="@(@game.GameCover.Height/10)" width="@(@game.GameCover.Width/10)"*@ alt="@game.Name" style="max-height:100%; max-width:100%"/></td>
+                <td><img src="@game.Cover.Url" @*height="@(@game.Cover.Height/10)"*@ @*width="@(@game.Cover.Width/10)"*@ alt="@game.Name" style="max-height:100%; max-width:100%"/></td>
                 }
                 else
                 {

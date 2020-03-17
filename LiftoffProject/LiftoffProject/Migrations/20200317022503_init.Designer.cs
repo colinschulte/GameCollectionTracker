@@ -4,43 +4,22 @@ using LiftoffProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LiftoffProject.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    partial class GameDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200317022503_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("LiftoffProject.Models.AlternativeName", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("AlternativeName");
-                });
 
             modelBuilder.Entity("LiftoffProject.Models.Game", b =>
                 {
@@ -64,14 +43,11 @@ namespace LiftoffProject.Migrations
                     b.Property<int>("CoverId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime>("FirstReleaseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("FirstReleaseDateUTC")
-                        .HasColumnType("int");
+                    b.Property<DateTimeOffset>("FirstReleaseDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<int>("Follows")
                         .HasColumnType("int");
@@ -121,11 +97,8 @@ namespace LiftoffProject.Migrations
                     b.Property<int>("TotalRatingCount")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UpdatedAtUTC")
-                        .HasColumnType("int");
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
@@ -148,8 +121,8 @@ namespace LiftoffProject.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<int?>("GameId")
                         .HasColumnType("int");
@@ -160,11 +133,8 @@ namespace LiftoffProject.Migrations
                     b.Property<string>("Slug")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UpdatedAtUTC")
-                        .HasColumnType("int");
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
@@ -233,8 +203,8 @@ namespace LiftoffProject.Migrations
                     b.Property<int>("Category")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<int>("Date")
                         .HasColumnType("int");
@@ -260,11 +230,8 @@ namespace LiftoffProject.Migrations
                     b.Property<string>("Slug")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UpdatedAtUTC")
-                        .HasColumnType("int");
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
@@ -277,13 +244,6 @@ namespace LiftoffProject.Migrations
                     b.HasIndex("GameId");
 
                     b.ToTable("ReleaseDates");
-                });
-
-            modelBuilder.Entity("LiftoffProject.Models.AlternativeName", b =>
-                {
-                    b.HasOne("LiftoffProject.Models.Game", null)
-                        .WithMany("AlternativeNames")
-                        .HasForeignKey("GameId");
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.Genre", b =>

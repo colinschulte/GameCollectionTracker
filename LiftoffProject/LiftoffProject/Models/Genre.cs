@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LiftoffProject.Models
 {
-    public class Genre : GameBase
+    public class Genre : Base
     {
         [NotMapped]
         [JsonProperty(PropertyName = "games")]

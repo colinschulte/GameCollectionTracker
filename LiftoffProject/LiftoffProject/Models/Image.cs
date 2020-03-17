@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 
 namespace LiftoffProject.Models
 {
-    public class Image
+    public class Image 
     {
         [Key]
         [JsonProperty(PropertyName = "id")]
         public int id { get; set; }
 
         [JsonProperty(PropertyName = "image_id")]
-        public string image_id { get; set; }
+        public string ImageId { get; set; }
 
         [JsonProperty(PropertyName = "url")]
         public string Url { get; set; }
 
         [JsonProperty(PropertyName = "game")]
-        public int game { get; set; }
+        public int Game { get; set; }
 
         [JsonProperty(PropertyName = "width")]
         public int Width { get; set; }

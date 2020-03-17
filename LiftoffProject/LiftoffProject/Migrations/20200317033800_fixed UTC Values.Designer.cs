@@ -4,43 +4,22 @@ using LiftoffProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LiftoffProject.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    partial class GameDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200317033800_fixed UTC Values")]
+    partial class fixedUTCValues
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("LiftoffProject.Models.AlternativeName", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("AlternativeName");
-                });
 
             modelBuilder.Entity("LiftoffProject.Models.Game", b =>
                 {
@@ -277,13 +256,6 @@ namespace LiftoffProject.Migrations
                     b.HasIndex("GameId");
 
                     b.ToTable("ReleaseDates");
-                });
-
-            modelBuilder.Entity("LiftoffProject.Models.AlternativeName", b =>
-                {
-                    b.HasOne("LiftoffProject.Models.Game", null)
-                        .WithMany("AlternativeNames")
-                        .HasForeignKey("GameId");
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.Genre", b =>
