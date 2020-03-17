@@ -37,7 +37,6 @@ namespace LiftoffProject.Models
         [JsonProperty(PropertyName = "artworks")]
         public int[] ArtworkIds { get; set; }
 
-        [NotMapped]
         public ICollection<Image> Artworks { get; set; }
 
         [NotMapped]
@@ -157,7 +156,9 @@ namespace LiftoffProject.Models
         public int[] ReleaseDateIds { get; set; }
 
         public ICollection<ReleaseDate> ReleaseDates { get; set; }
-        
+
+        public IList<ReleaseGameId> ReleaseGameIds { get; set; }
+
         //screenshots(Array[Inline Model 3], optional),
         [NotMapped]
         [JsonProperty(PropertyName = "screenshots")]

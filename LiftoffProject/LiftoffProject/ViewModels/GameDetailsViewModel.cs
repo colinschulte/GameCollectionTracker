@@ -10,7 +10,7 @@ namespace LiftoffProject.ViewModels
     {
         public Game Game { get; set; }
 
-        public IList<ReleaseDate> ReleaseDates { get; set; }
+        public IList<ReleaseGameId> ReleaseDates { get; set; }
         public IList<GenreGameId> Genres { get; set; }
         public IList<Image> Screenshots { get; set; }
 

@@ -26,9 +26,9 @@
 @if (Model.ReleaseDates != null)
 {
     <h4>Release Date:</h4>
-    foreach (ReleaseDate releaseDate in Model.ReleaseDates)
+    foreach (ReleaseGameId releaseGameId in Model.ReleaseDates)
     {
-        <h4>@releaseDate.Date</h4>
+        <h4>@releaseGameId.ReleaseDate.Human</h4>
 
     }
 

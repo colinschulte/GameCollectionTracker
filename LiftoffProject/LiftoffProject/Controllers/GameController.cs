@@ -252,6 +252,15 @@ namespace LiftoffProject.Controllers
                             {
                                 context.ReleaseDates.Add(releaseDate);
                             }
+                            if ((!context.ReleaseGameIds.Any(r => r.ReleaseDateId == releaseDate.Id)) || (!context.ReleaseGameIds.Any(r => r.GameId == newGame.Id)))
+                            {
+                                ReleaseGameId releaseGameId = new ReleaseGameId
+                                {
+                                    ReleaseDateId = releaseDate.Id,
+                                    GameId = newGame.Id
+                                };
+                                context.ReleaseGameIds.Add(releaseGameId);
+                            }
                             using (var transaction = context.Database.BeginTransaction())
                             {
                                 context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.ReleaseDates ON;");
@@ -282,6 +291,7 @@ namespace LiftoffProject.Controllers
         {
             Game game = context.Games.Single(g => g.Id == gameId);
             IList<GenreGameId> genreGameIds = null;
+            IList<ReleaseGameId> releaseGameIds = null;
 
             if (game.CoverId != 0)
             {
@@ -296,10 +306,21 @@ namespace LiftoffProject.Controllers
                     .Where(ggid => ggid.GameId == game.Id)
                     .ToList();
             }
+
+            if (context.ReleaseGameIds.Any(r => r.GameId == game.Id))
+            {
+                releaseGameIds = context
+                    .ReleaseGameIds
+                    .Include(rgid => rgid.ReleaseDate)
+                    .Where(rgid => rgid.GameId == game.Id)
+                    .ToList();
+            }
+
             GameDetailsViewModel viewModel = new GameDetailsViewModel
             {
                 Game = game,
                 Genres = genreGameIds,
+                ReleaseDates = releaseGameIds
                 
             };
 

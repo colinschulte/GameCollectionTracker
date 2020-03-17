@@ -15,6 +15,7 @@ namespace LiftoffProject.Data
         public DbSet<GenreGameId> GenreGameIds { get; set; }
         public DbSet<Image> Screenshots { get; set; }
         public DbSet<ReleaseDate> ReleaseDates { get; set; }
+        public DbSet<ReleaseGameId> ReleaseGameIds { get; set; }
 
 
 
@@ -26,6 +27,9 @@ namespace LiftoffProject.Data
         {
             modelBuilder.Entity<GenreGameId>()
                 .HasKey(g => new { g.GenreId, g.GameId });
+
+            modelBuilder.Entity<ReleaseGameId>()
+                .HasKey(r => new { r.ReleaseDateId, r.GameId });
             
             base.OnModelCreating(modelBuilder);
         }
