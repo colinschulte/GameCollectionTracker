@@ -51,7 +51,7 @@ namespace LiftoffProject.Controllers
         {
             Game[] games = null;
             string jsonGame = "";
-            StringContent content = new StringContent("fields *; where id = " + id + ";");
+            StringContent content = new StringContent("fields *; where id = (" + id + ");");
             HttpResponseMessage response = await client.PostAsync(path, content);
             if (response.IsSuccessStatusCode)
             {
@@ -61,20 +61,33 @@ namespace LiftoffProject.Controllers
             return games;
         }
 
-        async Task<Image[]> GetCoverAsync(string path, string id)
+        async Task<Image[]> GetImageAsync(string path, string id)
         {
-            Image[] covers = null;
-            string jsonCover = "";
-            StringContent content = new StringContent("fields *; where id = " + id + ";");
+            Image[] images = null;
+            string jsonImage = "";
+            StringContent content = new StringContent("fields *; where id = (" + id + ");");
             HttpResponseMessage response = await client.PostAsync(path, content);
             if (response.IsSuccessStatusCode)
             {
-                jsonCover = await response.Content.ReadAsStringAsync();
-                covers = JsonConvert.DeserializeObject<Image[]>(jsonCover);
+                jsonImage = await response.Content.ReadAsStringAsync();
+                images = JsonConvert.DeserializeObject<Image[]>(jsonImage);
             }
-            return covers;
+            return images;
         }
 
+        async Task<Screenshot[]> GetScreenshotAsync(string path, string id)
+        {
+            Screenshot[] screenshots = null;
+            string jsonScreenshot = "";
+            StringContent content = new StringContent("fields *; where id = (" + id + ");");
+            HttpResponseMessage response = await client.PostAsync(path, content);
+            if (response.IsSuccessStatusCode)
+            {
+                jsonScreenshot = await response.Content.ReadAsStringAsync();
+                screenshots = JsonConvert.DeserializeObject<Screenshot[]>(jsonScreenshot);
+            }
+            return screenshots;
+        }
 
         async Task<Genre[]> GetGenreAsync(string path, string ids)
         {
@@ -160,23 +173,22 @@ namespace LiftoffProject.Controllers
                 {
                     if (newGame.CoverId != 0)
                     {
-                        if (!context.Covers.Any(c => c.id == newGame.CoverId))
+                        if (!context.Covers.Any(c => c.Id == newGame.CoverId))
                         {
-                            var covers = await GetCoverAsync("/covers/", newGame.CoverId.ToString());
+                            var covers = await GetImageAsync("/covers/", newGame.CoverId.ToString());
                             foreach (Image newCover in covers)
                             {
                                 context.Covers.Add(newCover);
                                 using (var transaction = context.Database.BeginTransaction())
                                 {
-                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Image ON;");
+                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Covers ON;");
                                     context.SaveChanges();
-                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Image OFF;");
+                                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Covers OFF;");
                                     transaction.Commit();
                                 }
                             }
                         }
                     }
-
                     if (!context.Games.Any(g => g.Id == newGame.Id))
                     {
                         context.Games.Add(newGame);
@@ -248,7 +260,7 @@ namespace LiftoffProject.Controllers
                         ReleaseDate[] releaseDates = await GetReleaseDateAsync("release_dates/", releaseDateIds);
                         foreach (ReleaseDate releaseDate in releaseDates)
                         {
-                            if (!context.ReleaseDates.Any(g => g.Id == releaseDate.Id))
+                            if (!context.ReleaseDates.Any(r => r.Id == releaseDate.Id))
                             {
                                 context.ReleaseDates.Add(releaseDate);
                             }
@@ -266,6 +278,47 @@ namespace LiftoffProject.Controllers
                                 context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.ReleaseDates ON;");
                                 context.SaveChanges();
                                 context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.ReleaseDates OFF;");
+                                transaction.Commit();
+                            }
+                        }
+                    }
+                    if (newGame.ScreenshotIds != null)
+                    {
+                        string screenshotIds = "";
+                        bool first = true;
+                        foreach (int screenshotId in newGame.ScreenshotIds)
+                        {
+                            if (first == true)
+                            {
+                                screenshotIds += (screenshotId.ToString());
+                                first = false;
+                            }
+                            else
+                            {
+                                screenshotIds += ("," + screenshotId.ToString());
+                            }
+                        }
+                        Screenshot[] screenshots = await GetScreenshotAsync("/screenshots/", screenshotIds);
+                        foreach (Screenshot screenshot in screenshots)
+                        {
+                            if (!context.Screenshots.Any(s => s.Id == screenshot.Id))
+                            {
+                                context.Screenshots.Add(screenshot);
+                            }
+                            if ((!context.ScreenshotGameIds.Any(s => s.ScreenshotId == screenshot.Id)) || (!context.ScreenshotGameIds.Any(s => s.GameId == newGame.Id)))
+                            {
+                                ScreenshotGameId screenshotGameId = new ScreenshotGameId
+                                {
+                                    ScreenshotId = screenshot.Id,
+                                    GameId = newGame.Id
+                                };
+                                context.ScreenshotGameIds.Add(screenshotGameId);
+                            }
+                            using (var transaction = context.Database.BeginTransaction())
+                            {
+                                context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Covers ON;");
+                                context.SaveChanges();
+                                context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Covers OFF;");
                                 transaction.Commit();
                             }
                         }
@@ -292,6 +345,7 @@ namespace LiftoffProject.Controllers
             Game game = context.Games.Single(g => g.Id == gameId);
             IList<GenreGameId> genreGameIds = null;
             IList<ReleaseGameId> releaseGameIds = null;
+            IList<ScreenshotGameId> screenshotGameIds = null;
 
             if (game.CoverId != 0)
             {
@@ -316,11 +370,21 @@ namespace LiftoffProject.Controllers
                     .ToList();
             }
 
+            if (context.ScreenshotGameIds.Any(s => s.GameId == game.Id))
+            {
+                screenshotGameIds = context
+                    .ScreenshotGameIds
+                    .Include(sgid => sgid.Screenshot)
+                    .Where(sgid => sgid.GameId == game.Id)
+                    .ToList();
+            }
+
             GameDetailsViewModel viewModel = new GameDetailsViewModel
             {
                 Game = game,
                 Genres = genreGameIds,
-                ReleaseDates = releaseGameIds
+                ReleaseDates = releaseGameIds,
+                Screenshots = screenshotGameIds
                 
             };
 

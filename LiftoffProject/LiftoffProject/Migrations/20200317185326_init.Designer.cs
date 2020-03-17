@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LiftoffProject.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    [Migration("20200317035238_altered alternative names")]
-    partial class alteredalternativenames
+    [Migration("20200317185326_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -195,10 +195,14 @@ namespace LiftoffProject.Migrations
 
             modelBuilder.Entity("LiftoffProject.Models.Image", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Game")
                         .HasColumnType("int");
@@ -218,11 +222,13 @@ namespace LiftoffProject.Migrations
                     b.Property<int>("Width")
                         .HasColumnType("int");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("Image");
+                    b.ToTable("Covers");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Image");
                 });
 
             modelBuilder.Entity("LiftoffProject.Models.ReleaseDate", b =>
@@ -281,6 +287,48 @@ namespace LiftoffProject.Migrations
                     b.ToTable("ReleaseDates");
                 });
 
+            modelBuilder.Entity("LiftoffProject.Models.ReleaseGameId", b =>
+                {
+                    b.Property<int>("ReleaseDateId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ReleaseDateId", "GameId");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("ReleaseGameIds");
+                });
+
+            modelBuilder.Entity("LiftoffProject.Models.ScreenshotGameId", b =>
+                {
+                    b.Property<int>("ScreenshotId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ScreenshotId", "GameId");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("ScreenshotGameIds");
+                });
+
+            modelBuilder.Entity("LiftoffProject.Models.Screenshot", b =>
+                {
+                    b.HasBaseType("LiftoffProject.Models.Image");
+
+                    b.Property<int?>("GameId1")
+                        .HasColumnType("int");
+
+                    b.HasIndex("GameId1");
+
+                    b.HasDiscriminator().HasValue("Screenshot");
+                });
+
             modelBuilder.Entity("LiftoffProject.Models.AlternativeName", b =>
                 {
                     b.HasOne("LiftoffProject.Models.Game", null)
@@ -313,7 +361,7 @@ namespace LiftoffProject.Migrations
             modelBuilder.Entity("LiftoffProject.Models.Image", b =>
                 {
                     b.HasOne("LiftoffProject.Models.Game", null)
-                        .WithMany("Screenshots")
+                        .WithMany("Artworks")
                         .HasForeignKey("GameId");
                 });
 
@@ -324,6 +372,43 @@ namespace LiftoffProject.Migrations
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("LiftoffProject.Models.ReleaseGameId", b =>
+                {
+                    b.HasOne("LiftoffProject.Models.Game", "Game")
+                        .WithMany("ReleaseGameIds")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LiftoffProject.Models.ReleaseDate", "ReleaseDate")
+                        .WithMany("ReleaseGameIds")
+                        .HasForeignKey("ReleaseDateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LiftoffProject.Models.ScreenshotGameId", b =>
+                {
+                    b.HasOne("LiftoffProject.Models.Game", "Game")
+                        .WithMany("ScreenshotGameIds")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LiftoffProject.Models.Screenshot", "Screenshot")
+                        .WithMany("ScreenshotGameIds")
+                        .HasForeignKey("ScreenshotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LiftoffProject.Models.Screenshot", b =>
+                {
+                    b.HasOne("LiftoffProject.Models.Game", null)
+                        .WithMany("Screenshots")
+                        .HasForeignKey("GameId1");
                 });
 #pragma warning restore 612, 618
         }

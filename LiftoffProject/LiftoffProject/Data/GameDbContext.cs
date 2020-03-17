@@ -13,9 +13,10 @@ namespace LiftoffProject.Data
         public DbSet<Game> Games { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<GenreGameId> GenreGameIds { get; set; }
-        public DbSet<Image> Screenshots { get; set; }
         public DbSet<ReleaseDate> ReleaseDates { get; set; }
         public DbSet<ReleaseGameId> ReleaseGameIds { get; set; }
+        public DbSet<Screenshot> Screenshots { get; set; }
+        public DbSet<ScreenshotGameId> ScreenshotGameIds { get; set; }
 
 
 
@@ -30,6 +31,9 @@ namespace LiftoffProject.Data
 
             modelBuilder.Entity<ReleaseGameId>()
                 .HasKey(r => new { r.ReleaseDateId, r.GameId });
+
+            modelBuilder.Entity<ScreenshotGameId>()
+                .HasKey(s => new { s.ScreenshotId, s.GameId });
             
             base.OnModelCreating(modelBuilder);
         }

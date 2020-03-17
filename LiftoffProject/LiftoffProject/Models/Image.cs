@@ -12,7 +12,7 @@ namespace LiftoffProject.Models
     {
         [Key]
         [JsonProperty(PropertyName = "id")]
-        public int id { get; set; }
+        public int Id { get; set; }
 
         [JsonProperty(PropertyName = "image_id")]
         public string ImageId { get; set; }

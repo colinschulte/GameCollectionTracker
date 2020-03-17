@@ -5,42 +5,69 @@
 }
 
 <h1>@Model.Game.Name</h1>
-@if (Model.Game.Cover != null)
-{
-    <img src="@Model.Game.Cover.Url" height="@(@Model.Game.Cover.Height/7)" width="@(@Model.Game.Cover.Width/7)" alt="@Model.Game.Name" />
-}
-
-<h4>@Model.Game.Summary</h4>
-
-@if (Model.Genres != null)
-{
-    <h4>Genres:</h4>
-    foreach (GenreGameId genreGameId in Model.Genres)
+<div id="cover">
+    @if (Model.Game.Cover != null)
     {
-        <h4>@genreGameId.Genre.Name</h4>
+        <img style="" src="@("https://images.igdb.com/igdb/image/upload/t_cover_big/" + Model.Game.Cover.ImageId + ".jpeg")" alt="@Model.Game.Name" />
+    }
+</div>
+
+<div id="summary">
+    <p>@Model.Game.Summary</p>
+</div>
+
+<div id="genre">
+    @if (Model.Genres != null)
+    {
+        <h4>Genres:</h4>
+        foreach (GenreGameId genreGameId in Model.Genres)
+        {
+            <h5>@genreGameId.Genre.Name</h5>
+
+        }
 
     }
+</div>
 
-}
-
-@if (Model.ReleaseDates != null)
-{
-    <h4>Release Date:</h4>
-    foreach (ReleaseGameId releaseGameId in Model.ReleaseDates)
+<div id="releasedate">
+    @if (Model.ReleaseDates != null)
     {
-        <h4>@releaseGameId.ReleaseDate.Human</h4>
-
+        <h4>Release Date:</h4>
+        bool first = true;
+        foreach (ReleaseGameId releaseGameId in Model.ReleaseDates)
+        {
+        if(first == true)
+        {
+        <h5>@releaseGameId.ReleaseDate.Human</h5>
+        first = false;
+        }
+        }
     }
+</div>
 
-}
+<div id="screenshots">
 
 @if (Model.Screenshots != null)
 {
-    foreach (Image screenshot in Model.Screenshots)
+    <h4>Screenshots:</h4>
+    bool first = true;
+    foreach (ScreenshotGameId screenshotGameId in Model.Screenshots)
     {
-        <img src="@screenshot.Url" alt="Screenshot" />
+        if (first == true)
+        {
+            <style>
+                body {
+                    background-image: url(@("https://images.igdb.com/igdb/image/upload/t_screenshot_big/" + @screenshotGameId.Screenshot.ImageId + ".jpeg"));
+                    background-repeat:no-repeat;
+                    background-size:100%;
+                }
+            </style>
+            first = false;
+        }
+        <img src="@("https://images.igdb.com/igdb/image/upload/t_screenshot_med/" + @screenshotGameId.Screenshot.ImageId + ".jpeg")" alt="Screenshot" />
 
     }
 
 }
+</div>
 

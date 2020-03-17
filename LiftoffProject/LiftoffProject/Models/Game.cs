@@ -164,7 +164,9 @@ namespace LiftoffProject.Models
         [JsonProperty(PropertyName = "screenshots")]
         public int[] ScreenshotIds { get; set; }
 
-        public ICollection<Image> Screenshots { get; set; }
+        public ICollection<Screenshot> Screenshots { get; set; }
+
+        public IList<ScreenshotGameId> ScreenshotGameIds { get; set; }
 
         [NotMapped]
         [JsonProperty(PropertyName = "similar_games")]
